@@ -81,12 +81,6 @@
     }
   }
 
-  @if $throw {
-    @each $item in $validation-errors {
-      @error '[#{$prefix}] #{$item}';
-    }
-  }
-
   @return $validation-errors;
 }
 
@@ -108,14 +102,46 @@
   @return $results;
 }
 
-@function validate($schema, $value, $label: 'Value', $throw: true, $prefix: 'surimi') {
+@function validate-fn($schema, $value, $label: 'Value', $throw: true, $prefix: 'surimi') {
   @if not utils.is-schema($schema) {
     @error '[#{$prefix}] The value passed to `validate` must be a valid schema, for example the return value of `surimi.number(...)`';
   }
 
+  $validation-errors: [];
   @if utils.is-primitive-schema($schema) {
-    @return _validate-primitive($schema, $value, $label, $throw, $prefix);
+    $validation-errors: _validate-primitive($schema, $value, $label, $throw, $prefix);
+  } @else {
+    $validation-errors: _validate-map($schema, $value, $label, $throw, $prefix);
   }
 
-  @return _validate-map($schema, $value, $label, $throw, $prefix);
+  @if $throw {
+    @each $item in $validation-errors {
+      @error '[#{$prefix}] #{$item}';
+    }
+  }
+
+  @return $validation-errors;
+}
+
+@mixin validate($schema, $value, $label: 'Value', $throw: true, $prefix: 'surimi') {
+  @if not utils.is-schema($schema) {
+    @error '[#{$prefix}] The value passed to `validate` must be a valid schema, for example the return value of `surimi.number(...)`';
+  }
+
+  $validation-errors: [];
+  @if utils.is-primitive-schema($schema) {
+    $validation-errors: _validate-primitive($schema, $value, $label, $throw, $prefix);
+  } @else {
+    $validation-errors: _validate-map($schema, $value, $label, $throw, $prefix);
+  }
+
+  @if $throw {
+    @each $item in $validation-errors {
+      @error '[#{$prefix}] #{$item}';
+    }
+  } @else {
+    @each $item in $validation-errors {
+      @warn '[#{$prefix}] #{$item}';
+    }
+  }
 }

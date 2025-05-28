@@ -9,27 +9,5 @@ $my-string-schema: s.string(
   $ends-with: 'mi',
 );
 
-$res1: s.validate($my-number-schema, 15); // Oh-oh, an error!
-$res2: s.validate($my-string-schema, 'tofu'); // No way!
-
-$my-object-schema: s.map(
-  (
-    'name': s.string(
-        $label: 'Name',
-        $max-length: 10,
-      ),
-    'age': s.number(
-        $label: 'Age',
-        $gte: 18,
-        $lte: 99,
-      ),
-  )
-);
-
-$res3: s.validate(
-  $my-object-schema,
-  (
-    'name': 'John',
-    'age': 17,
-  )
-);
+@include s.validate($my-number-schema, 15); // Oh-oh, an error!
+@include s.validate($my-string-schema, 'tofu'); // No way!

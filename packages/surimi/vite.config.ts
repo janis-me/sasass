@@ -5,10 +5,10 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 export default defineConfig({
   plugins: [
     viteStaticCopy({
-      structured: true,
+      structured: false,
       targets: [
         {
-          src: 'src',
+          src: 'src/*',
           dest: '',
         },
       ],
@@ -20,9 +20,6 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.scss'),
       formats: ['es'],
       fileName: 'index',
-    },
-    rollupOptions: {
-      preserveEntrySignatures: 'strict',
     },
   },
 });

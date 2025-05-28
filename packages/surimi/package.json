@@ -11,7 +11,7 @@
       "./src/*/index.ts"
     ]
   },
-  "main": "./src/index.scss",
+  "main": "./dist/index.scss",
   "scripts": {
     "build": "vite build",
     "format": "prettier . --write",
