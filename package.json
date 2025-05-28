@@ -1,6 +1,6 @@
 {
   "name": "@janis.me/sass",
-  "description": "Safe SASS - A SASS/SCSS validation library",
+  "description": "surimi - Safe SASS validation library",
   "keywords": [
     "janis.me",
     "sass",
@@ -8,6 +8,10 @@
     "validation"
   ],
   "homepage": "https://janis.me",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/janis-me/surimi.git"
+  },
   "license": "MIT",
   "author": "Janis Jansen",
   "type": "module",

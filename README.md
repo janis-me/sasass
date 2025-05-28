@@ -1,3 +1,17 @@
+<p align="center">
+  <a href="https://github.com/janis-me/surimi" target="_blank" rel="noopener noreferrer">
+    <img width="180" src="./surimi.png" alt="Themed logo">
+  </a>
+</p>
+<p align="center" style="margin-top: -8px">
+  <a href="https://npmjs.com/package/surimi">
+    <img alt="surimi on npm" src="https://img.shields.io/npm/v/surimi?label=surimi%20on%20npm%20&labelColor=orange&color=grey">
+  </a>
+  <a href="https://github.com/janis-me/surimi">
+    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/janis-me/surimi?style=flat">
+  </a>
+</p>
+
 # `surimi` - Safe SASS validation library
 
 Make your SCSS/SASS safer with `surimi`. Define a schema for your data and ensure users use it correctly!
