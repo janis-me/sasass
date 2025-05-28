@@ -1,10 +1,10 @@
-# `ssass` - Safe SASS validation library
+# `sasass` - Safe SASS validation library
 
-Make your SCSS/SASS library safer with `ssass`. Define a schema for your data and ensure users use it correctly!
+Make your SCSS/SASS library safer with `sasass`. Define a schema for your data and ensure users use it correctly!
 
 <!-- prettier-ignore-start -->
 ```scss
-@use 'ssass' as s;
+@use 'sasass' as s;
 
 $my-schema: s.schema((
   'name': s.string().required()

@@ -7,6 +7,7 @@ ignoredBuiltDependencies:
 catalogs:
   build:
     vite: ^6.3.5
+    'vite-plugin-static-copy': '^2.3.1'
     typescript: ^5.8.3
     sass: '^1.89.0'
   format:

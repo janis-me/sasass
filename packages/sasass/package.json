@@ -1,5 +1,5 @@
 {
-  "name": "ssass",
+  "name": "surimi",
   "version": "0.1.0",
   "private": false,
   "type": "module",
@@ -13,11 +13,17 @@
   },
   "main": "./src/index.scss",
   "scripts": {
-    "format": "prettier . --write"
+    "build": "vite build",
+    "format": "prettier . --write",
+    "prepack": "pnpm -c exec ../scripts/prepack.sh",
+    "prepublishOnly": "pnpm install && pnpm build"
   },
   "devDependencies": {
     "@janis.me/linter-config": "workspace:*",
     "@janis.me/typescript-config": "workspace:*",
-    "sass": "catalog:build"
+    "@types/node": "catalog:types",
+    "sass": "catalog:build",
+    "vite": "catalog:build",
+    "vite-plugin-static-copy": "catalog:build"
   }
 }

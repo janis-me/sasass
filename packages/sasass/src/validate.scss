@@ -26,7 +26,7 @@
     @if $arg != null {
       $function-name: '#{$prefix}-#{$key}';
       @if not meta.function-exists($function-name, $module) {
-        @error '[ssass] Internal error: Validator function `#{$function-name}` does not exist in module `#{$module}`.';
+        @error '[sasass] Internal error: Validator function `#{$function-name}` does not exist in module `#{$module}`.';
       }
 
       $fn: meta.get-function($function-name, $module);
@@ -108,9 +108,9 @@
   @return $results;
 }
 
-@function validate($schema, $value, $label: 'Value', $throw: true, $prefix: 'ssass') {
+@function validate($schema, $value, $label: 'Value', $throw: true, $prefix: 'sasass') {
   @if not utils.is-schema($schema) {
-    @error '[#{$prefix}] The value passed to `validate` must be a valid schema, for example the return value of `ssass.number(...)`';
+    @error '[#{$prefix}] The value passed to `validate` must be a valid schema, for example the return value of `sasass.number(...)`';
   }
 
   @if utils.is-primitive-schema($schema) {

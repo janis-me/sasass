@@ -20,7 +20,7 @@ $_number-aliases: (
 
   @each $key, $value in $kvargs {
     @if list.index($allowed-validators, $key) == null {
-      @error '[ssass] `number.#{$key}` is not a valid validator. Allowed validators are: #{$allowed-validators}';
+      @error '[sasass] `number.#{$key}` is not a valid validator. Allowed validators are: #{$allowed-validators}';
     }
   }
 
@@ -38,7 +38,7 @@ $_string-aliases: ();
 
   @each $key, $value in $kvargs {
     @if list.index($allowed-validators, $key) == null {
-      @error '[ssass] `string.#{$key}` is not a valid validator. Allowed validators are: #{$allowed-validators}';
+      @error '[sasass] `string.#{$key}` is not a valid validator. Allowed validators are: #{$allowed-validators}';
     }
   }
 
@@ -49,12 +49,12 @@ $_string-aliases: ();
 
 @function map($map, $label: null) {
   @if meta.type-of($map) != 'map' {
-    @error '[ssass] `schema` expected a map, but got #{meta.type-of($map)}';
+    @error '[sasass] `schema` expected a map, but got #{meta.type-of($map)}';
   }
 
   @each $key, $value in $map {
     @if not utils.is-schema($value) {
-      @error '[ssass] `schema` expected a map with validators, but got `#{$key}: #{meta.type-of($value)}`';
+      @error '[sasass] `schema` expected a map with validators, but got `#{$key}: #{meta.type-of($value)}`';
     }
   }
 
