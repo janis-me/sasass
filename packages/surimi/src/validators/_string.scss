@@ -106,7 +106,7 @@
         $alias: map.get($aliases, $key);
         $fn-key: 'string-#{$alias}';
       } @else {
-        @error '[sasass] Internal error: Validator function `#{$key}` does not exist for strings.';
+        @error '[surimi] Internal error: Validator function `#{$key}` does not exist for strings.';
       }
 
       $fn: meta.get-function($fn-key);

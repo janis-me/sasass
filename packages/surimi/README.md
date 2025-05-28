@@ -6,16 +6,14 @@ Make your SCSS/SASS library safer with `surimi`. Define a schema for your data a
 ```scss
 @use 'surimi' as s;
 
-$my-number-schema: s.number(
-  $gte: 18,
+$my-schema: s.schema((
+  'name': s.string().required()
+));
+
+$my-data: (
+  'name': null
 );
 
-$my-string-schema: s.string(
-  $starts-with: 'su',
-  $ends-with: 'mi',
-);
-
-@include s.validate($my-number-schema, 15); // Oh-oh, an error!
-@include s.validate($my-string-schema, 'tofu'); // No way!
+@include $my-schema.validate($my-data); // Error! 'name' is required!
 ```
 <!-- prettier-ignore-end -->

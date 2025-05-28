@@ -1,5 +1,5 @@
 {
-  "name": "@janis.me/sasass-example",
+  "name": "@janis.me/surimi-example",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "sasass": "workspace:*"
+    "surimi": "workspace:*"
   },
   "devDependencies": {
     "@janis.me/linter-config": "workspace:*",

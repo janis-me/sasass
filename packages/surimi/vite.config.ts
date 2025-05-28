@@ -16,7 +16,7 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      name: 'sasass',
+      name: 'surimi',
       entry: resolve(__dirname, 'src/index.scss'),
       formats: ['es'],
       fileName: 'index',

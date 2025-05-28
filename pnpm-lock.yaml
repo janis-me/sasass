@@ -109,9 +109,9 @@ importers:
 
   packages/example:
     dependencies:
-      sasass:
+      surimi:
         specifier: workspace:*
-        version: link:../sasass
+        version: link:../surimi
     devDependencies:
       '@janis.me/linter-config':
         specifier: workspace:*
@@ -153,7 +153,7 @@ importers:
         specifier: catalog:lint
         version: 8.33.0(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3)
 
-  packages/sasass:
+  packages/surimi:
     devDependencies:
       '@janis.me/linter-config':
         specifier: workspace:*
@@ -161,6 +161,9 @@ importers:
       '@janis.me/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: catalog:types
+        version: 22.15.23
       sass:
         specifier: catalog:build
         version: 1.89.0
@@ -170,6 +173,8 @@ importers:
       vite-plugin-static-copy:
         specifier: catalog:build
         version: 2.3.1(vite@6.3.5(@types/node@22.15.23)(jiti@2.4.2)(sass-embedded@1.89.0)(sass@1.89.0)(yaml@2.7.1))
+
+  packages/scripts: {}
 
   packages/typescript-config: {}
 

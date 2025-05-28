@@ -1,19 +1,16 @@
-@use 'sasass' as s;
+@use 'surimi' as s;
 
 $my-number-schema: s.number(
-  $gte: 2,
-  $in: (
-    1 2 3,
-  ),
+  $gte: 18,
 );
 
 $my-string-schema: s.string(
-  $starts-with: 'my-a',
-  $ends-with: 's',
+  $starts-with: 'su',
+  $ends-with: 'mi',
 );
 
-$res1: s.validate($my-number-schema, 3);
-$res2: s.validate($my-string-schema, 'my-as');
+$res1: s.validate($my-number-schema, 15); // Oh-oh, an error!
+$res2: s.validate($my-string-schema, 'tofu'); // No way!
 
 $my-object-schema: s.map(
   (

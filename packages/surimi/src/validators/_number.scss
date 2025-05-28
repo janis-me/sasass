@@ -7,7 +7,7 @@
   @debug meta.type-of($equal);
 
   @if meta.type-of($equal) != 'number' {
-    @error '[sasass] number.eq expects a number, got `#{$equal}` (#{meta.type-of($equal)})';
+    @error '[surimi] number.eq expects a number, got `#{$equal}` (#{meta.type-of($equal)})';
   }
 
   @if $value != $equal {
@@ -19,7 +19,7 @@
 
 @function number-ne($not-equal, $value) {
   @if meta.type-of($not-equal) != 'number' {
-    @error '[sasass] number.ne expects a number, got `#{$not-equal}` (#{meta.type-of($not-equal)})';
+    @error '[surimi] number.ne expects a number, got `#{$not-equal}` (#{meta.type-of($not-equal)})';
   }
 
   @if $value == $not-equal {
@@ -31,7 +31,7 @@
 
 @function number-gt($greater-than, $value) {
   @if meta.type-of($greater-than) != 'number' {
-    @error '[sasass] number.gt expects a number, got `#{$greater-than}` (#{meta.type-of($greater-than)})';
+    @error '[surimi] number.gt expects a number, got `#{$greater-than}` (#{meta.type-of($greater-than)})';
   }
 
   @if $value <= $greater-than {
@@ -43,7 +43,7 @@
 
 @function number-lt($less-than, $value) {
   @if meta.type-of($less-than) != 'number' {
-    @error '[sasass] number.lt expects a number, got `#{$less-than}` (#{meta.type-of($less-than)})';
+    @error '[surimi] number.lt expects a number, got `#{$less-than}` (#{meta.type-of($less-than)})';
   }
 
   @if $value >= $less-than {
@@ -55,7 +55,7 @@
 
 @function number-gte($greater-than-or-equal, $value) {
   @if meta.type-of($greater-than-or-equal) != 'number' {
-    @error '[sasass] number.gte expects a number, got `#{$greater-than-or-equal}` (#{meta.type-of($greater-than-or-equal)})';
+    @error '[surimi] number.gte expects a number, got `#{$greater-than-or-equal}` (#{meta.type-of($greater-than-or-equal)})';
   }
 
   @if $value < $greater-than-or-equal {
@@ -67,7 +67,7 @@
 
 @function number-lte($less-than-or-equal, $value) {
   @if meta.type-of($less-than-or-equal) != 'number' {
-    @error '[sasass] number.lte expects a number, got `#{$less-than-or-equal}` (#{meta.type-of($less-than-or-equal)})';
+    @error '[surimi] number.lte expects a number, got `#{$less-than-or-equal}` (#{meta.type-of($less-than-or-equal)})';
   }
 
   @if $value > $less-than-or-equal {
@@ -79,12 +79,12 @@
 
 @function number-in($in, $value) {
   @if meta.type-of($in) != 'list' {
-    @error '[sasass] number.in expects a list, got `#{$in}` (#{meta.type-of($in)})';
+    @error '[surimi] number.in expects a list, got `#{$in}` (#{meta.type-of($in)})';
   }
 
   @each $item in $in {
     @if meta.type-of($item) != 'number' {
-      @error '[sasass] number.in expects a list of numbers, but one was `#{$item}` (#{meta.type-of($item)})';
+      @error '[surimi] number.in expects a list of numbers, but one was `#{$item}` (#{meta.type-of($item)})';
     }
   }
 
@@ -97,11 +97,11 @@
 
 @function number-not-in($not-in, $value) {
   @if meta.type-of($not-in) != 'list' {
-    @error '[sasass] number.not-in expects a list, got `#{$not-in}` (#{meta.type-of($not-in)})';
+    @error '[surimi] number.not-in expects a list, got `#{$not-in}` (#{meta.type-of($not-in)})';
   }
   @each $item in $not-in {
     @if meta.type-of($item) != 'number' {
-      @error '[sasass] number.not-in expects a list of numbers, but one was `#{$item}` (#{meta.type-of($item)})';
+      @error '[surimi] number.not-in expects a list of numbers, but one was `#{$item}` (#{meta.type-of($item)})';
     }
   }
 
@@ -129,7 +129,7 @@
         $alias: map.get($aliases, $key);
         $fn-key: 'number-#{$alias}';
       } @else {
-        @error '[sasass] Internal error: Validator function `#{$key}` does not exist for numbers.';
+        @error '[surimi] Internal error: Validator function `#{$key}` does not exist for numbers.';
       }
 
       $fn: meta.get-function($fn-key);
