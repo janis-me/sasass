@@ -1,0 +1,62 @@
+@forward './validate.scss';
+
+@use 'sass:meta';
+@use 'sass:list';
+@use 'sass:map';
+
+@use './utils.scss';
+
+@use './validators';
+
+$_number-aliases: (
+  'min': 'gte',
+  'max': 'lte',
+);
+
+@function number($label: null, $args...) {
+  $kvargs: meta.keywords($args);
+
+  $allowed-validators: validators.list('number', $_number-aliases);
+
+  @each $key, $value in $kvargs {
+    @if list.index($allowed-validators, $key) == null {
+      @error '[ssass] `number.#{$key}` is not a valid validator. Allowed validators are: #{$allowed-validators}';
+    }
+  }
+
+  $validators: validators.get-number-validators($_number-aliases, $args...);
+
+  @return ('type': 'number', 'label': $label, 'validators': $validators);
+}
+
+$_string-aliases: ();
+
+@function string($label: null, $args...) {
+  $kvargs: meta.keywords($args);
+
+  $allowed-validators: validators.list('string');
+
+  @each $key, $value in $kvargs {
+    @if list.index($allowed-validators, $key) == null {
+      @error '[ssass] `string.#{$key}` is not a valid validator. Allowed validators are: #{$allowed-validators}';
+    }
+  }
+
+  $validators: validators.get-string-validators((), $args...);
+
+  @return ('type': 'string', 'label': $label, 'validators': $validators);
+}
+
+@function map($map, $label: null) {
+  @if meta.type-of($map) != 'map' {
+    @error '[ssass] `schema` expected a map, but got #{meta.type-of($map)}';
+  }
+
+  @each $key, $value in $map {
+    @if not utils.is-schema($value) {
+      @error '[ssass] `schema` expected a map with validators, but got `#{$key}: #{meta.type-of($value)}`';
+    }
+  }
+
+  @return ('type': 'map', 'label': $label, 'validators': $map);
+}

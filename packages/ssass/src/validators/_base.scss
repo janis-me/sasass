@@ -1,0 +1,27 @@
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:meta';
+
+/** This function adds basic validation to all validators. It's called in validate.scss */
+@function validate($schema, $value) {
+  $type: map.get($schema, 'type');
+
+  $validation-errors: [];
+
+  $type-error: null;
+  @if $type == 'number' and meta.type-of($value) != 'number' {
+    $type-error: 'must be a number';
+  } @else if $type == 'string' and meta.type-of($value) != 'string' {
+    $type-error: 'must be a string';
+  } @else if $type == 'list' and meta.type-of($value) != 'list' {
+    $type-error: 'must be a list';
+  } @else if $type == 'map' and meta.type-of($value) != 'map' {
+    $type-error: 'must be a map';
+  }
+
+  @if ($type-error != null) {
+    $validation-errors: list.append($validation-errors, $type-error);
+  }
+
+  @return $validation-errors;
+}

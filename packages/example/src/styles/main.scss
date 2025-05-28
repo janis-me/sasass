@@ -1,0 +1,38 @@
+@use 'ssass' as s;
+
+$my-number-schema: s.number(
+  $gte: 2,
+  $in: (
+    1 2 3,
+  ),
+);
+
+$my-string-schema: s.string(
+  $starts-with: 'my-a',
+  $ends-with: 's',
+);
+
+$res1: s.validate($my-number-schema, 3);
+$res2: s.validate($my-string-schema, 'my-as');
+
+$my-object-schema: s.map(
+  (
+    'name': s.string(
+        $label: 'Name',
+        $max-length: 10,
+      ),
+    'age': s.number(
+        $label: 'Age',
+        $gte: 18,
+        $lte: 99,
+      ),
+  )
+);
+
+$res3: s.validate(
+  $my-object-schema,
+  (
+    'name': 'John',
+    'age': 17,
+  )
+);

@@ -1,0 +1,56 @@
+@use 'sass:meta';
+@use 'sass:map';
+
+@function is-number($value...) {
+  @each $val in $value {
+    @if meta.type-of($val) != 'number' {
+      @return false;
+    }
+  }
+
+  @return true;
+}
+
+@function is-string($value...) {
+  @each $val in $value {
+    @if meta.type-of($val) != 'string' {
+      @return false;
+    }
+  }
+
+  @return true;
+}
+
+@function is-schema($value) {
+  @if meta.type-of($value) != 'map' {
+    @return false;
+  }
+
+  @if not map.has-key($value, 'type') {
+    @return false;
+  }
+
+  @if not map.has-key($value, 'label') {
+    @return false;
+  }
+
+  @if not map.has-key($value, 'validators') {
+    @return false;
+  }
+
+  @return true;
+}
+
+@function is-primitive-schema($value) {
+  @if not is-schema($value) {
+    @return false;
+  }
+
+  $type: map.get($value, 'type');
+
+  @if $type != 'number' and $type != 'string' {
+    @return false;
+  }
+
+  @return true;
+}

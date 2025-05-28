@@ -1,0 +1,23 @@
+{
+  "name": "ssass",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts"
+    ]
+  },
+  "main": "./src/index.scss",
+  "scripts": {
+    "format": "prettier . --write"
+  },
+  "devDependencies": {
+    "@janis.me/linter-config": "workspace:*",
+    "@janis.me/typescript-config": "workspace:*",
+    "sass": "catalog:build"
+  }
+}

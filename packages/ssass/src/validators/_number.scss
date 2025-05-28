@@ -1,0 +1,148 @@
+@use 'sass:meta';
+@use 'sass:map';
+@use 'sass:list';
+
+// Implementations:
+@function number-eq($equal, $value) {
+  @debug meta.type-of($equal);
+
+  @if meta.type-of($equal) != 'number' {
+    @error '[ssass] number.eq expects a number, got `#{$equal}` (#{meta.type-of($equal)})';
+  }
+
+  @if $value != $equal {
+    @return 'must be equal to #{$equal}';
+  }
+
+  @return null;
+}
+
+@function number-ne($not-equal, $value) {
+  @if meta.type-of($not-equal) != 'number' {
+    @error '[ssass] number.ne expects a number, got `#{$not-equal}` (#{meta.type-of($not-equal)})';
+  }
+
+  @if $value == $not-equal {
+    @return 'must not be equal to #{$not-equal}';
+  }
+
+  @return null;
+}
+
+@function number-gt($greater-than, $value) {
+  @if meta.type-of($greater-than) != 'number' {
+    @error '[ssass] number.gt expects a number, got `#{$greater-than}` (#{meta.type-of($greater-than)})';
+  }
+
+  @if $value <= $greater-than {
+    @return 'must be greater than #{$greater-than}';
+  }
+
+  @return null;
+}
+
+@function number-lt($less-than, $value) {
+  @if meta.type-of($less-than) != 'number' {
+    @error '[ssass] number.lt expects a number, got `#{$less-than}` (#{meta.type-of($less-than)})';
+  }
+
+  @if $value >= $less-than {
+    @return 'must be less than #{$less-than}';
+  }
+
+  @return null;
+}
+
+@function number-gte($greater-than-or-equal, $value) {
+  @if meta.type-of($greater-than-or-equal) != 'number' {
+    @error '[ssass] number.gte expects a number, got `#{$greater-than-or-equal}` (#{meta.type-of($greater-than-or-equal)})';
+  }
+
+  @if $value < $greater-than-or-equal {
+    @return 'must be greater than or equal to #{$greater-than-or-equal}';
+  }
+
+  @return null;
+}
+
+@function number-lte($less-than-or-equal, $value) {
+  @if meta.type-of($less-than-or-equal) != 'number' {
+    @error '[ssass] number.lte expects a number, got `#{$less-than-or-equal}` (#{meta.type-of($less-than-or-equal)})';
+  }
+
+  @if $value > $less-than-or-equal {
+    @return 'must be less than or equal to #{$less-than-or-equal}';
+  }
+
+  @return null;
+}
+
+@function number-in($in, $value) {
+  @if meta.type-of($in) != 'list' {
+    @error '[ssass] number.in expects a list, got `#{$in}` (#{meta.type-of($in)})';
+  }
+
+  @each $item in $in {
+    @if meta.type-of($item) != 'number' {
+      @error '[ssass] number.in expects a list of numbers, but one was `#{$item}` (#{meta.type-of($item)})';
+    }
+  }
+
+  @if list.index($in, $value) == null {
+    @return 'must be one of: #{$in}';
+  }
+
+  @return null;
+}
+
+@function number-not-in($not-in, $value) {
+  @if meta.type-of($not-in) != 'list' {
+    @error '[ssass] number.not-in expects a list, got `#{$not-in}` (#{meta.type-of($not-in)})';
+  }
+  @each $item in $not-in {
+    @if meta.type-of($item) != 'number' {
+      @error '[ssass] number.not-in expects a list of numbers, but one was `#{$item}` (#{meta.type-of($item)})';
+    }
+  }
+
+  @if list.index($not-in, $value) != null {
+    @return 'must not be one of: #{$not-in}';
+  }
+
+  @return null;
+}
+
+// Public-facing functions:
+
+// This should be replaced by validate.__DONT_USE_ME__get-validators(), but there is an issue right now, see that function.
+@function get-number-validators($aliases, $args...) {
+  $keywords: meta.keywords($args);
+
+  $validators: ();
+
+  @each $key, $arg in $keywords {
+    @if $arg != null {
+      $fn-key: $key;
+      @if meta.function-exists('number-#{$key}') {
+        $fn-key: 'number-#{$key}';
+      } @else if map.has-key($aliases, $key) {
+        $alias: map.get($aliases, $key);
+        $fn-key: 'number-#{$alias}';
+      } @else {
+        @error '[ssass] Internal error: Validator function `#{$key}` does not exist for numbers.';
+      }
+
+      $fn: meta.get-function($fn-key);
+
+      $validator: (
+        '#{$key}': (
+            'fn': $fn,
+            'arg': $arg,
+          ),
+      );
+      $validators: map.merge($validators, $validator);
+    }
+  }
+
+  @return $validators;
+}

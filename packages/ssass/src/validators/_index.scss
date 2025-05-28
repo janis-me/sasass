@@ -1,0 +1,27 @@
+@forward './number.scss';
+@forward './string.scss';
+
+@use 'sass:meta';
+@use 'sass:string' as str;
+@use 'sass:map';
+@use 'sass:list';
+
+@use './_number.scss';
+@use './_string.scss';
+
+@function list($module, $aliases: ()) {
+  $all-functions: meta.module-functions($module);
+
+  $res: [];
+
+  @each $key, $fn in $all-functions {
+    @if str.index($key, '#{$module}-') == 1 {
+      $key: str.slice($key, str.length($module) + 2);
+      $res: list.append($res, $key);
+    }
+  }
+
+  $alias-keys: map.keys($aliases);
+
+  @return list.join($res, $alias-keys);
+}

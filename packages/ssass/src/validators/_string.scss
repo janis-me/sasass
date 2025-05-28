@@ -1,0 +1,125 @@
+@use 'sass:meta';
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:string';
+
+@function string-eq($equal, $value) {
+  @if $value != $equal {
+    @return 'must be equal to `#{$equal}`';
+  }
+
+  @return null;
+}
+
+@function string-in($in, $value) {
+  @if not list.nth($in, $value) {
+    @return 'must be one of: #{list.join($in, ', ')}';
+  }
+
+  @return null;
+}
+
+@function string-not-in($not-in, $value) {
+  @if list.nth($not-in, $value) {
+    @return 'must not be one of: #{list.join($not-in, ', ')}';
+  }
+
+  @return null;
+}
+
+@function string-contains($contains, $value) {
+  @if not string.index($value, $contains) {
+    @return 'must contain `#{$contains}`';
+  }
+
+  @return null;
+}
+
+@function string-not-contains($not-contains, $value) {
+  @if string.index($value, $not-contains) {
+    @return 'must not contain `#{$not-contains}`';
+  }
+
+  @return null;
+}
+
+@function string-starts-with($starts-with, $value) {
+  @if string.slice($value, 0, string.length($starts-with)) != $starts-with {
+    @return 'must start with `#{$starts-with}`';
+  }
+
+  @return null;
+}
+
+@function string-ends-with($ends-with, $value) {
+  @if string.slice($value, calc(string.length($ends-with) * -1)) != $ends-with {
+    @return 'must end with `#{$ends-with}`';
+  }
+
+  @return null;
+}
+
+@function string-not-starts-with($not-starts-with, $value) {
+  @if string.slice($value, 0, string.length($not-starts-with)) == $not-starts-with {
+    @return 'must not start with `#{$not-starts-with}`';
+  }
+
+  @return null;
+}
+
+@function string-not-ends-with($not-ends-with, $value) {
+  @if string.slice($value, -string.length($not-ends-with)) == $not-ends-with {
+    @return 'must not end with `#{$not-ends-with}`';
+  }
+
+  @return null;
+}
+
+@function string-max-length($max-length, $value) {
+  @if string.length($value) > $max-length {
+    @return 'must not be longer than #{$max-length} characters';
+  }
+
+  @return null;
+}
+
+@function string-min-length($min-length, $value) {
+  @if string.length($value) < $min-length {
+    @return 'must be at least #{$min-length} characters long';
+  }
+
+  @return null;
+}
+
+// This should be replaced by validate.__DONT_USE_ME__get-validators(), but there is an issue right now, see that function.
+@function get-string-validators($aliases, $args...) {
+  $keywords: meta.keywords($args);
+
+  $validators: ();
+
+  @each $key, $arg in $keywords {
+    @if $arg != null {
+      $fn-key: $key;
+      @if meta.function-exists('string-#{$key}') {
+        $fn-key: 'string-#{$key}';
+      } @else if map.has-key($aliases, $key) {
+        $alias: map.get($aliases, $key);
+        $fn-key: 'string-#{$alias}';
+      } @else {
+        @error '[ssass] Internal error: Validator function `#{$key}` does not exist for strings.';
+      }
+
+      $fn: meta.get-function($fn-key);
+
+      $validator: (
+        '#{$key}': (
+            'fn': $fn,
+            'arg': $arg,
+          ),
+      );
+      $validators: map.merge($validators, $validator);
+    }
+  }
+
+  @return $validators;
+}

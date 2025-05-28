@@ -1,8 +1,11 @@
 {
-  "name": "@janis.me/repo-starter",
-  "description": "A starter template for pnpm-based web repositories",
+  "name": "@janis.me/sass",
+  "description": "Safe SASS - A SASS/SCSS validation library",
   "keywords": [
-    "janis.me"
+    "janis.me",
+    "sass",
+    "scss",
+    "validation"
   ],
   "homepage": "https://janis.me",
   "license": "MIT",
@@ -28,7 +31,7 @@
     "typescript": "catalog:build",
     "vitest": "catalog:test"
   },
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.11.0",
   "engines": {
     "node": ">=22.11.0"
   }

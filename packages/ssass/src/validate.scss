@@ -1,0 +1,121 @@
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:meta';
+
+@use './utils.scss';
+
+@use './validators/_base.scss';
+
+/**
+ * Returns a map of validators for the given module and prefix.
+ *
+ * @param {string} $module - The module name, as in a string matching the namespace of an @use rule in the current file
+ * @param {string} $prefix - The prefix of the validator function names, e.g. '__number';
+ * @param {...string} $args - The keywords to get validators for. They **must** match the module's function names.
+
+ * @return {map} A map of validators.
+
+  * ATTENTION: THIS DOES NOT CURRENTLY WORK. SEE https://github.com/sass/sass/issues/4084
+ */
+@function __DONT_USE_ME__get-validators($module, $prefix, $args...) {
+  $kvargs: meta.keywords($args);
+
+  $validators: ();
+
+  @each $key, $arg in $kvargs {
+    @if $arg != null {
+      $function-name: '#{$prefix}-#{$key}';
+      @if not meta.function-exists($function-name, $module) {
+        @error '[ssass] Internal error: Validator function `#{$function-name}` does not exist in module `#{$module}`.';
+      }
+
+      $fn: meta.get-function($function-name, $module);
+
+      $validator: (
+        '#{$key}': (
+            'fn': $fn,
+            'arg': $arg,
+          ),
+      );
+      $validators: map.merge($validators, $validator);
+    }
+  }
+
+  @return $validators;
+}
+
+@function _validate-primitive($schema, $value, $label, $throw, $prefix) {
+  $user-label: map.get($schema, 'label');
+  $final-label: $label;
+  @if $user-label != null {
+    $final-label: $user-label;
+  }
+
+  $validators: map.get($schema, 'validators');
+
+  /* prettier-ignore */
+  $input: [];
+
+  @each $key, $validator in $validators {
+    $fn: map.get($validator, 'fn');
+    $arg: map.get($validator, 'arg');
+    $in: list.join(($fn), $arg);
+
+    $input: list.append($input, $in);
+  }
+
+  $validation-errors: base.validate($schema, $value);
+
+  // Check for any 'base errors' first. If they exist, don't run the validators.
+  // This is done to avoid type-errors in the validators - they lead to unclear error messages.
+  @if list.length($validation-errors) == 0 {
+    @each $item in $input {
+      $fn: list.nth($item, 1);
+      $args: (list.nth($item, 2) $value);
+      $res: meta.call($fn, $args...);
+
+      // Only save and process the result, if the validator returned an error (string).
+      @if $res != null and meta.type-of($res) == 'string' {
+        $validation-errors: list.append($validation-errors, '#{$final-label} #{$res}');
+      }
+    }
+  }
+
+  @if $throw {
+    @each $item in $validation-errors {
+      @error '[#{$prefix}] #{$item}';
+    }
+  }
+
+  @return $validation-errors;
+}
+
+@function _validate-map($schema, $value, $label, $throw, $prefix) {
+  $results: ();
+
+  @each $key, $sub-schema in map.get($schema, 'validators') {
+    $sub-value: map.get($value, $key);
+    $res: validate($sub-schema, $sub-value, $label, $throw, $prefix);
+
+    $results: map.merge(
+      $results,
+      (
+        '#{$key}': $res,
+      )
+    );
+  }
+
+  @return $results;
+}
+
+@function validate($schema, $value, $label: 'Value', $throw: true, $prefix: 'ssass') {
+  @if not utils.is-schema($schema) {
+    @error '[#{$prefix}] The value passed to `validate` must be a valid schema, for example the return value of `ssass.number(...)`';
+  }
+
+  @if utils.is-primitive-schema($schema) {
+    @return _validate-primitive($schema, $value, $label, $throw, $prefix);
+  }
+
+  @return _validate-map($schema, $value, $label, $throw, $prefix);
+}
