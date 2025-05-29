@@ -2,7 +2,9 @@
 @use 'sass:list';
 @use 'sass:meta';
 
-/** This function adds basic validation to all validators. It's called in validate.scss */
+/** 
+* This function adds basic validation to all validators. It's called in validate.scss before any other validation is done on a schema.
+* */
 @function validate($schema, $value) {
   $type: map.get($schema, 'type');
 

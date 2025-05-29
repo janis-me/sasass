@@ -24,8 +24,6 @@ catalogs:
     jiti: ^2.4.2
   test:
     vitest: ^3.1.4
-    '@vitest/browser': ^3.1.4
-    '@playwright/test': ^1.52.0
   types:
     '@types/node': ^22.15.23
   script:

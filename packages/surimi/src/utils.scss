@@ -41,16 +41,10 @@
   @return true;
 }
 
-@function is-primitive-schema($value) {
-  @if not is-schema($value) {
-    @return false;
+@function get-schema-type($schema) {
+  @if not is-schema($schema) {
+    @error '[surimi] Invalid schema`';
   }
 
-  $type: map.get($value, 'type');
-
-  @if $type != 'number' and $type != 'string' {
-    @return false;
-  }
-
-  @return true;
+  @return map.get($schema, 'type');
 }

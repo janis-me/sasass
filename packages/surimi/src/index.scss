@@ -15,7 +15,6 @@ $_number-aliases: (
 
 @function number($label: null, $args...) {
   $kvargs: meta.keywords($args);
-
   $allowed-validators: validators.list('number', $_number-aliases);
 
   @each $key, $value in $kvargs {
@@ -29,12 +28,14 @@ $_number-aliases: (
   @return ('type': 'number', 'label': $label, 'validators': $validators);
 }
 
-$_string-aliases: ();
+$_string-aliases: (
+  'min': 'min-length',
+  'max': 'max-length',
+);
 
 @function string($label: null, $args...) {
   $kvargs: meta.keywords($args);
-
-  $allowed-validators: validators.list('string');
+  $allowed-validators: validators.list('string', $_string-aliases);
 
   @each $key, $value in $kvargs {
     @if list.index($allowed-validators, $key) == null {
@@ -42,12 +43,23 @@ $_string-aliases: ();
     }
   }
 
-  $validators: validators.get-string-validators((), $args...);
+  $validators: validators.get-string-validators($_string-aliases, $args...);
 
   @return ('type': 'string', 'label': $label, 'validators': $validators);
 }
 
-@function map($map, $label: null) {
+$_map-aliases: ();
+
+@function map($map, $label: null, $args...) {
+  $kvargs: meta.keywords($args);
+  $allowed-validators: validators.list('map', $_map-aliases);
+
+  @each $key, $value in $kvargs {
+    @if list.index($allowed-validators, $key) == null {
+      @error '[surimi] `map.#{$key}` is not a valid validator. Allowed validators are: #{$allowed-validators}';
+    }
+  }
+
   @if meta.type-of($map) != 'map' {
     @error '[surimi] `schema` expected a map, but got #{meta.type-of($map)}';
   }
@@ -58,5 +70,28 @@ $_string-aliases: ();
     }
   }
 
-  @return ('type': 'map', 'label': $label, 'validators': $map);
+  $validators: validators.get-map-validators($_map-aliases, $args...);
+
+  @return ('type': 'map', 'label': $label, 'validators': $validators, 'schema': $map);
+}
+
+$_list-aliases: ();
+
+@function list($schema, $label: null, $args...) {
+  $kvargs: meta.keywords($args);
+  $allowed-validators: validators.list('list', $_list-aliases);
+
+  @each $key, $value in $kvargs {
+    @if list.index($allowed-validators, $key) == null {
+      @error '[surimi] `list.#{$key}` is not a valid validator. Allowed validators are: #{$allowed-validators}';
+    }
+  }
+
+  @if not utils.is-schema($schema) {
+    @error '[surimi] `schema` expected a schema, but got #{meta.type-of($schema)}';
+  }
+
+  $validators: validators.get-list-validators($_list-aliases, $args...);
+
+  @return ('type': 'list', 'label': $label, 'validators': $validators, 'schema': $schema);
 }
