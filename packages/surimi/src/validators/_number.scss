@@ -4,14 +4,12 @@
 
 // Implementations:
 @function number-eq($equal, $value) {
-  @debug meta.type-of($equal);
-
   @if meta.type-of($equal) != 'number' {
     @error '[surimi] number.eq expects a number, got `#{$equal}` (#{meta.type-of($equal)})';
   }
 
   @if $value != $equal {
-    @return 'must be equal to #{$equal}';
+    @return 'must be equal to `#{$equal}`';
   }
 
   @return null;
@@ -23,7 +21,7 @@
   }
 
   @if $value == $not-equal {
-    @return 'must not be equal to #{$not-equal}';
+    @return 'must not be equal to `#{$not-equal}`';
   }
 
   @return null;
@@ -35,7 +33,7 @@
   }
 
   @if $value <= $greater-than {
-    @return 'must be greater than #{$greater-than}';
+    @return 'must be greater than `#{$greater-than}`';
   }
 
   @return null;
@@ -47,7 +45,7 @@
   }
 
   @if $value >= $less-than {
-    @return 'must be less than #{$less-than}';
+    @return 'must be less than `#{$less-than}`';
   }
 
   @return null;
@@ -59,7 +57,7 @@
   }
 
   @if $value < $greater-than-or-equal {
-    @return 'must be greater than or equal to #{$greater-than-or-equal}';
+    @return 'must be greater than or equal to `#{$greater-than-or-equal}`';
   }
 
   @return null;
@@ -71,7 +69,7 @@
   }
 
   @if $value > $less-than-or-equal {
-    @return 'must be less than or equal to #{$less-than-or-equal}';
+    @return 'must be less than or equal to `#{$less-than-or-equal}`';
   }
 
   @return null;
@@ -89,7 +87,7 @@
   }
 
   @if list.index($in, $value) == null {
-    @return 'must be one of: #{$in}';
+    @return 'must be one of: `#{$in}`';
   }
 
   @return null;
@@ -106,7 +104,7 @@
   }
 
   @if list.index($not-in, $value) != null {
-    @return 'must not be one of: #{$not-in}';
+    @return 'must not be one of: `#{$not-in}`';
   }
 
   @return null;

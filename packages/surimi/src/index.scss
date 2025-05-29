@@ -29,12 +29,15 @@ $_number-aliases: (
   @return ('type': 'number', 'label': $label, 'validators': $validators);
 }
 
-$_string-aliases: ();
+$_string-aliases: (
+  'min': 'min-length',
+  'max': 'max-length',
+);
 
 @function string($label: null, $args...) {
   $kvargs: meta.keywords($args);
 
-  $allowed-validators: validators.list('string');
+  $allowed-validators: validators.list('string', $_string-aliases);
 
   @each $key, $value in $kvargs {
     @if list.index($allowed-validators, $key) == null {
@@ -42,7 +45,7 @@ $_string-aliases: ();
     }
   }
 
-  $validators: validators.get-string-validators((), $args...);
+  $validators: validators.get-string-validators($_string-aliases, $args...);
 
   @return ('type': 'string', 'label': $label, 'validators': $validators);
 }

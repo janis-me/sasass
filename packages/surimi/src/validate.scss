@@ -6,6 +6,8 @@
 
 @use './validators/_base.scss';
 
+$_default-label: 'Value';
+
 /**
  * Returns a map of validators for the given module and prefix.
  *
@@ -44,24 +46,25 @@
   @return $validators;
 }
 
-@function _validate-primitive($schema, $value, $label, $throw, $prefix) {
+@function _validate-primitive($schema, $value, $label: null) {
   $user-label: map.get($schema, 'label');
-  $final-label: $label;
+
+  $final-label: $_default-label;
   @if $user-label != null {
     $final-label: $user-label;
+  } @else if $label != null {
+    $final-label: $label;
   }
 
   $validators: map.get($schema, 'validators');
 
-  /* prettier-ignore */
   $input: [];
 
   @each $key, $validator in $validators {
     $fn: map.get($validator, 'fn');
     $arg: map.get($validator, 'arg');
-    $in: list.join(($fn), $arg);
 
-    $input: list.append($input, $in);
+    $input: list.append($input, ($fn, $arg));
   }
 
   $validation-errors: base.validate($schema, $value);
@@ -84,12 +87,31 @@
   @return $validation-errors;
 }
 
-@function _validate-map($schema, $value, $label, $throw, $prefix) {
+@function _validate-map($schema, $value, $label) {
+  $map-user-label: map.get($schema, 'label');
+
+  $map-label: $_default-label;
+  @if $map-user-label != null {
+    $map-label: $map-user-label;
+  } @else if $label != null {
+    $map-label: $label;
+  } @else {
+    $map-label: 'Map';
+  }
+
   $results: ();
 
   @each $key, $sub-schema in map.get($schema, 'validators') {
     $sub-value: map.get($value, $key);
-    $res: validate($sub-schema, $sub-value, $label, $throw, $prefix);
+    $sub-label: map.get($sub-schema, 'label');
+
+    @if $sub-label == null {
+      $sub-label: $key;
+    }
+
+    $final-label: '#{$map-label}.#{$sub-label}';
+
+    $res: _validate($sub-schema, $sub-value, $final-label);
 
     $results: map.merge(
       $results,
@@ -102,38 +124,82 @@
   @return $results;
 }
 
-@function validate-fn($schema, $value, $label: 'Value', $throw: true, $prefix: 'surimi') {
+/* The base (internal) function to validate any type of schema.
+ *
+ * @param {map} $schema - The schema to validate against, e.g. the return value of `surimi.number(...)`.
+ * @param {*} $value - The value to validate.
+ * @param {string} $label - A default label for the value, used in error messages.
+ * @return {list} A list of validation errors, or an empty list if the value is valid.
+ */
+@function _validate($schema, $value, $label: null) {
   @if not utils.is-schema($schema) {
-    @error '[#{$prefix}] The value passed to `validate` must be a valid schema, for example the return value of `surimi.number(...)`';
+    @error '[surimi] The first value passed to `validate` must be a valid schema, for example the return value of `surimi.number(...)`';
   }
 
   $validation-errors: [];
-  @if utils.is-primitive-schema($schema) {
-    $validation-errors: _validate-primitive($schema, $value, $label, $throw, $prefix);
+
+  $schema-type: utils.get-schema-type($schema);
+  @if $schema-type == 'number' or $schema-type == 'string' {
+    $validation-errors: _validate-primitive($schema, $value, $label);
+  } @else if $schema-type == 'map' {
+    $map-result: _validate-map($schema, $value, $label);
+
+    @each $key, $errors in $map-result {
+      $validation-errors: list.join($validation-errors, $errors);
+    }
   } @else {
-    $validation-errors: _validate-map($schema, $value, $label, $throw, $prefix);
+    @error '[surimi] Invalid schema type `#{$schema-type}`. Supported types are `number`, `string`, and `map`.';
   }
 
-  @if $throw {
-    @each $item in $validation-errors {
+  @return $validation-errors;
+}
+
+/* The base function to validate any type of schema.
+ *
+ * @param {map} $schema - The schema to validate against, e.g. the return value of `surimi.number(...)`.
+ * @param {*} $value - The value to validate.
+ * @param {string} $label - A default label for the value, used in error messages.
+ * if the validator was called with a label (like s.number(..., $label: 'My number')), that label will be used instead.
+ * @param {boolean} $throw - Whether to throw an error if the value is invalid.
+ * If 'warn' is set to true, this will be 'false', if $throw is set to false, will return a list of validation errors instead of throwing an error.
+ * @param {boolean} $warn - Whether to warn instead of throwing an error if the value is invalid.
+ * If 'true', will not throw an error, but will return a list of validation errors instead. If 'throw' is set to 'false', will NOT show warnings, but instead
+  * return a list of validation errors.
+  * @return {list} A list of validation errors, or an empty list if the value is valid.
+ */
+@function validate-fn($schema, $value, $label: null, $throw: true, $warn: false, $prefix: 'surimi') {
+  $validation-errors: _validate($schema, $value, $label);
+
+  // This logic allows an easy way of switching between error, warning and 'return' modes.
+  // If 'throw' is set to true (default), it will throw as soon as it finds an error.
+  // If 'throw is set to false, it will return a list of validation errors.
+  // If 'warn' is set to true, it will warn instead of throwing an error.
+  @each $item in $validation-errors {
+    @if $throw {
       @error '[#{$prefix}] #{$item}';
+    } @else if $warn {
+      @warn '[#{$prefix}] #{$item}';
     }
   }
 
   @return $validation-errors;
 }
 
-@mixin validate($schema, $value, $label: 'Value', $throw: true, $prefix: 'surimi') {
-  @if not utils.is-schema($schema) {
-    @error '[#{$prefix}] The value passed to `validate` must be a valid schema, for example the return value of `surimi.number(...)`';
-  }
+/* The base mixin to validate any type of schema.
+ *
+ * @param {map} $schema - The schema to validate against, e.g. the return value of `surimi.number(...)`.
+ * @param {*} $value - The value to validate.
+ * @param {string} $label - A default label for the value, used in error messages.
+ * if the validator was called with a label (like s.number(..., $label: 'My number')), that label will be used instead.
+ * @param {boolean} $throw - Whether to throw an error if the value is invalid. If set to 'false', will warn instead.
 
-  $validation-errors: [];
-  @if utils.is-primitive-schema($schema) {
-    $validation-errors: _validate-primitive($schema, $value, $label, $throw, $prefix);
-  } @else {
-    $validation-errors: _validate-map($schema, $value, $label, $throw, $prefix);
-  }
+ * Unlike the `validate-fn` function, `validate` does not have a `warn` parameter. If you need to return a list of validation errors instead of throwing an error,
+ * you have to use the `validate-fn` function instead.
+
+ * @return {list} A list of validation errors, or an empty list if the value is valid.
+ */
+@mixin validate($schema, $value, $label: null, $throw: true, $prefix: 'surimi') {
+  $validation-errors: _validate($schema, $value, $label);
 
   @if $throw {
     @each $item in $validation-errors {
