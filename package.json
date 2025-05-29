@@ -25,8 +25,6 @@
     "@ianvs/prettier-plugin-sort-imports": "catalog:format",
     "@janis.me/linter-config": "workspace:*",
     "@janis.me/typescript-config": "workspace:*",
-    "@playwright/test": "catalog:test",
-    "@vitest/browser": "catalog:test",
     "eslint": "catalog:lint",
     "jiti": "catalog:lint",
     "prettier": "catalog:format",

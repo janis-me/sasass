@@ -7,20 +7,8 @@ export default defineConfig({
       {
         test: {
           name: 'unit',
-          include: ['./packages/**/test/*.unit.test.{ts,tsx}'],
+          include: ['./packages/**/test/**/*.test.{ts,tsx}'],
           css: true,
-        },
-      },
-      {
-        test: {
-          name: 'browser',
-          include: ['./packages/**/*.browser.test.{ts,tsx}'],
-          browser: {
-            enabled: true,
-            headless: true,
-            provider: 'playwright',
-            instances: [{ browser: 'chromium' }],
-          },
         },
       },
     ],

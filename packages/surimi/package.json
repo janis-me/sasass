@@ -24,6 +24,11 @@
       "./src/*/index.ts"
     ]
   },
+  "exports": {
+    ".": {
+      "sass": "./src/index.scss"
+    }
+  },
   "main": "./src/index.scss",
   "files": [
     "./src/**/*",

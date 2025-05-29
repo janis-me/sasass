@@ -4,6 +4,9 @@
 @use 'sass:string';
 
 @function string-eq($equal, $value) {
+  @if meta.type-of($equal) != 'string' {
+    @error '[surimi] string.eq expects a string, got `#{$equal}` (#{meta.type-of($equal)})';
+  }
   @if $value != $equal {
     @return 'must be equal to `#{$equal}`';
   }
@@ -11,23 +14,23 @@
   @return null;
 }
 
-@function string-in($in, $value) {
-  @if not list.nth($in, $value) {
-    @return 'must be one of: #{list.join($in, ', ')}';
+@function string-ne($not-equal, $value) {
+  @if meta.type-of($not-equal) != 'string' {
+    @error '[surimi] string.ne expects a string, got `#{$not-equal}` (#{meta.type-of($not-equal)})';
   }
 
-  @return null;
-}
-
-@function string-not-in($not-in, $value) {
-  @if list.nth($not-in, $value) {
-    @return 'must not be one of: #{list.join($not-in, ', ')}';
+  @if $value == $not-equal {
+    @return 'must not be equal to `#{$not-equal}`';
   }
 
   @return null;
 }
 
 @function string-contains($contains, $value) {
+  @if meta.type-of($contains) != 'string' {
+    @error '[surimi] string.contains expects a string, got `#{$contains}` (#{meta.type-of($contains)})';
+  }
+
   @if not string.index($value, $contains) {
     @return 'must contain `#{$contains}`';
   }
@@ -36,6 +39,10 @@
 }
 
 @function string-not-contains($not-contains, $value) {
+  @if meta.type-of($not-contains) != 'string' {
+    @error '[surimi] string.not-contains expects a string, got `#{$not-contains}` (#{meta.type-of($not-contains)})';
+  }
+
   @if string.index($value, $not-contains) {
     @return 'must not contain `#{$not-contains}`';
   }
@@ -44,6 +51,10 @@
 }
 
 @function string-starts-with($starts-with, $value) {
+  @if meta.type-of($starts-with) != 'string' {
+    @error '[surimi] string.starts-with expects a string, got `#{$starts-with}` (#{meta.type-of($starts-with)})';
+  }
+
   @if string.slice($value, 0, string.length($starts-with)) != $starts-with {
     @return 'must start with `#{$starts-with}`';
   }
@@ -52,6 +63,10 @@
 }
 
 @function string-ends-with($ends-with, $value) {
+  @if meta.type-of($ends-with) != 'string' {
+    @error '[surimi] string.ends-with expects a string, got `#{$ends-with}` (#{meta.type-of($ends-with)})';
+  }
+
   @if string.slice($value, calc(string.length($ends-with) * -1)) != $ends-with {
     @return 'must end with `#{$ends-with}`';
   }
@@ -60,6 +75,10 @@
 }
 
 @function string-not-starts-with($not-starts-with, $value) {
+  @if meta.type-of($not-starts-with) != 'string' {
+    @error '[surimi] string.not-starts-with expects a string, got `#{$not-starts-with}` (#{meta.type-of($not-starts-with)})';
+  }
+
   @if string.slice($value, 0, string.length($not-starts-with)) == $not-starts-with {
     @return 'must not start with `#{$not-starts-with}`';
   }
@@ -68,6 +87,10 @@
 }
 
 @function string-not-ends-with($not-ends-with, $value) {
+  @if meta.type-of($not-ends-with) != 'string' {
+    @error '[surimi] string.not-ends-with expects a string, got `#{$not-ends-with}` (#{meta.type-of($not-ends-with)})';
+  }
+
   @if string.slice($value, -string.length($not-ends-with)) == $not-ends-with {
     @return 'must not end with `#{$not-ends-with}`';
   }
@@ -76,6 +99,10 @@
 }
 
 @function string-max-length($max-length, $value) {
+  @if meta.type-of($max-length) != 'number' {
+    @error '[surimi] string.max-length expects a number, got `#{$max-length}` (#{meta.type-of($max-length)})';
+  }
+
   @if string.length($value) > $max-length {
     @return 'must not be longer than #{$max-length} characters';
   }
@@ -84,8 +111,46 @@
 }
 
 @function string-min-length($min-length, $value) {
+  @if meta.type-of($min-length) != 'number' {
+    @error '[surimi] string.min-length expects a number, got `#{$min-length}` (#{meta.type-of($min-length)})';
+  }
+
   @if string.length($value) < $min-length {
     @return 'must be at least #{$min-length} characters long';
+  }
+
+  @return null;
+}
+
+@function string-in($in, $value) {
+  @if meta.type-of($in) != 'list' {
+    @error '[surimi] string.in expects a list, got `#{$in}` (#{meta.type-of($in)})';
+  }
+  @each $item in $in {
+    @if meta.type-of($item) != 'string' {
+      @error '[surimi] string.in expects a list of strings, but one was `#{$item}` (#{meta.type-of($item)})';
+    }
+  }
+
+  @if not list.nth($in, $value) {
+    @return 'must be one of: #{list.join($in, ', ')}';
+  }
+
+  @return null;
+}
+
+@function string-not-in($not-in, $value) {
+  @if meta.type-of($not-in) != 'list' {
+    @error '[surimi] string.not-in expects a list, got `#{$not-in}` (#{meta.type-of($not-in)})';
+  }
+  @each $item in $not-in {
+    @if meta.type-of($item) != 'string' {
+      @error '[surimi] string.not-in expects a list of strings, but one was `#{$item}` (#{meta.type-of($item)})';
+    }
+  }
+
+  @if list.nth($not-in, $value) {
+    @return 'must not be one of: #{list.join($not-in, ', ')}';
   }
 
   @return null;

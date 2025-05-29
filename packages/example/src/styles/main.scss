@@ -1,13 +1,28 @@
 @use 'surimi' as s;
 
+// $my-map-schema: s.map(
+//   (
+//     'name': s.string(
+//         $starts-with: 'su',
+//         $ends-with: 'mi',
+//       ),
+//     'age': s.number(
+//         $gte: 18,
+//       ),
+//   )
+// );
+
+// @include s.validate(
+//   $my-map-schema,
+//   (
+//     'name': 'sushi',
+//     'age': 20,
+//   )
+// ); // All good!
+
+/* prettier-ignore */
 $my-number-schema: s.number(
-  $gte: 18,
+  $in: [18, 20, 22],
 );
 
-$my-string-schema: s.string(
-  $starts-with: 'su',
-  $ends-with: 'mi',
-);
-
-@include s.validate($my-number-schema, 15); // Oh-oh, an error!
-@include s.validate($my-string-schema, 'tofu'); // No way!
+@include s.validate($my-number-schema, 18);
