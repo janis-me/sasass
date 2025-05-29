@@ -24,19 +24,20 @@
       "./src/*/index.ts"
     ]
   },
-  "main": "./dist/index.scss",
+  "main": "./src/index.scss",
+  "files": [
+    "./src/**/*",
+    "./README.md"
+  ],
   "scripts": {
     "build": "vite build",
     "format": "prettier . --write",
     "prepack": "pnpm -c exec ../scripts/prepack.sh",
-    "prepublishOnly": "pnpm install && pnpm build"
+    "prepublishOnly": "pnpm install"
   },
   "devDependencies": {
     "@janis.me/linter-config": "workspace:*",
     "@janis.me/typescript-config": "workspace:*",
-    "@types/node": "catalog:types",
-    "sass": "catalog:build",
-    "vite": "catalog:build",
-    "vite-plugin-static-copy": "catalog:build"
+    "sass": "catalog:build"
   }
 }
