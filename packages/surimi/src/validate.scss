@@ -53,15 +53,13 @@
 
   $validators: map.get($schema, 'validators');
 
-  /* prettier-ignore */
   $input: [];
 
   @each $key, $validator in $validators {
     $fn: map.get($validator, 'fn');
     $arg: map.get($validator, 'arg');
-    $in: list.join(($fn), $arg);
 
-    $input: list.append($input, $in);
+    $input: list.append($input, ($fn, $arg));
   }
 
   $validation-errors: base.validate($schema, $value);
