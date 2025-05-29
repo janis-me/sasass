@@ -1,0 +1,35 @@
+@use 'sass:meta';
+@use 'sass:map';
+
+// This should be replaced by validate.__DONT_USE_ME__get-validators(), but there is an issue right now, see that function.
+@function get-map-validators($aliases, $args...) {
+  $keywords: meta.keywords($args);
+
+  $validators: ();
+
+  @each $key, $arg in $keywords {
+    @if $arg != null {
+      $fn-key: $key;
+      @if meta.function-exists('map-#{$key}') {
+        $fn-key: 'map-#{$key}';
+      } @else if map.has-key($aliases, $key) {
+        $alias: map.get($aliases, $key);
+        $fn-key: 'map-#{$alias}';
+      } @else {
+        @error '[surimi] Internal error: Validator function `#{$key}` does not exist for map.';
+      }
+
+      $fn: meta.get-function($fn-key);
+
+      $validator: (
+        '#{$key}': (
+            'fn': $fn,
+            'arg': $arg,
+          ),
+      );
+      $validators: map.merge($validators, $validator);
+    }
+  }
+
+  @return $validators;
+}
