@@ -76,9 +76,6 @@
 }
 
 @function number-in($in, $value) {
-  @debug 'in' $in;
-  @debug 'typeof in' meta.type-of($in);
-
   @if meta.type-of($in) != 'list' {
     @error '[surimi] number.in expects a list, got `#{$in}` (#{meta.type-of($in)})';
   }

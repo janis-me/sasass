@@ -1,28 +1,39 @@
 @use 'surimi' as s;
 
-// $my-map-schema: s.map(
-//   (
-//     'name': s.string(
-//         $starts-with: 'su',
-//         $ends-with: 'mi',
-//       ),
-//     'age': s.number(
-//         $gte: 18,
-//       ),
-//   )
-// );
-
-// @include s.validate(
-//   $my-map-schema,
-//   (
-//     'name': 'sushi',
-//     'age': 20,
-//   )
-// ); // All good!
-
-/* prettier-ignore */
-$my-number-schema: s.number(
-  $in: [18, 20, 22],
+$my-map-schema: s.map(
+  (
+    'name': s.string(
+        $starts-with: 'su',
+        $ends-with: 'mi',
+        $label: 'First name',
+      ),
+    'age': s.number(
+        $gte: 18,
+      ),
+    'items': s.map(
+        (
+          'name': s.string(
+              $min-length: 3,
+              $label: 'Item Name',
+            ),
+          'price': s.number(
+              $gte: 0,
+            ),
+        ),
+        $label: 'User Items'
+      ),
+  ),
+  $label: 'User'
 );
 
-@include s.validate($my-number-schema, 18);
+@include s.validate(
+  $my-map-schema,
+  (
+    'name': 'surimi',
+    'age': 20,
+    'items': (
+      'name': '2',
+      'price': 10,
+    ),
+  )
+); // All good!
