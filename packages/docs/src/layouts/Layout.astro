@@ -1,0 +1,111 @@
+---
+import { Image } from 'astro:assets';
+
+import logo from '../assets/surimi.png';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>surimi.dev</title>
+  </head>
+  <script>
+    import { setDefaultTheme, setTheme, toggleTheme } from '@janis.me/themed/js';
+
+    setDefaultTheme();
+
+    const toggleThemeButton = document.getElementById('toggle-theme-button');
+    if (toggleThemeButton) {
+      toggleThemeButton.addEventListener('click', () => {
+        const newTheme = toggleTheme();
+        setTheme(newTheme);
+      });
+    }
+  </script>
+
+  <body>
+    <header class="header">
+      <h1>
+        <Image src={logo} alt="Surimi Logo" width={32} height={32} class="logo" />
+        surimi.dev
+      </h1>
+
+      <button id="toggle-theme-button">toggle theme</button>
+    </header>
+    <main class="container">
+      <slot />
+      <footer class="footer">
+        <p>
+          ©2025 surimi.dev - built with astro, markdown and
+          <a href="https://github.com/janis-me/themed">@janis.me/themed</a>
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style lang="scss" is:global>
+  @use '../styles/index';
+  @use '../styles/globals' as *;
+
+  body {
+    display: grid;
+    grid-template-rows: themed('size-64') 1fr;
+    height: 100vh;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+
+  .container {
+    height: 100%;
+    overflow: auto;
+  }
+
+  .footer {
+    padding: themed('size-16') 0;
+    text-align: right;
+  }
+
+  @include media('>ultrawide') {
+    .header,
+    .container {
+      padding: 0 calc(themed('size-64') * 4);
+    }
+  }
+
+  @include media('<ultrawide') {
+    .header,
+    .container {
+      padding: 0 calc(themed('size-64') * 2);
+    }
+  }
+
+  @include media('<desktop') {
+    .header,
+    .container {
+      padding: 0 themed('size-64');
+    }
+  }
+
+  @include media('<tablet') {
+    .header,
+    .container {
+      padding: 0 themed('size-32');
+    }
+  }
+
+  @include media('<phone') {
+    .header,
+    .container {
+      padding: 0 themed('size-16');
+    }
+  }
+</style>
