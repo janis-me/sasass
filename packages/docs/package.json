@@ -1,0 +1,26 @@
+{
+  "name": "docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "astro": "astro",
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.2.5",
+    "astro": "^5.8.1",
+    "include-media": "^2.0.0",
+    "sanitize.css": "^13.0.0"
+  },
+  "devDependencies": {
+    "@janis.me/linter-config": "workspace:*",
+    "@janis.me/themed": "^0.2.0",
+    "@janis.me/typescript-config": "workspace:*",
+    "sass": "catalog:build",
+    "sharp": "^0.34.2"
+  }
+}
