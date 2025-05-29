@@ -1,0 +1,94 @@
+@use 'sass:meta';
+@use 'sass:list';
+@use 'sass:map';
+
+@function list-unique($unique, $value) {
+  @if meta.type-of($unique) != 'bool' {
+    @error '[surimi] list.unique expects a boolean, got `#{$unique}` (#{meta.type-of($unique)})';
+  }
+
+  @if meta.type-of($value) != 'list' {
+    @error 'must be of type `list`, got `#{$value}` (#{meta.type-of($value)})';
+  }
+
+  @if not $unique {
+    @return null;
+  }
+
+  $seen: ();
+  // Check each item
+  @each $item in $value {
+    @if list.index($seen, $item) != null {
+      @return 'must contain only unique items, but `#{$item}` is a duplicate';
+    }
+
+    $seen: list.append($seen, $item);
+  }
+
+  @return null;
+}
+
+@function list-min-length($min-length, $value) {
+  @if meta.type-of($min-length) != 'number' {
+    @error '[surimi] list.min-length expects a number, got `#{$min-length}` (#{meta.type-of($min-length)})';
+  }
+
+  @if meta.type-of($value) != 'list' {
+    @error 'must be of type `list`, got `#{$value}` (#{meta.type-of($value)})';
+  }
+
+  @if list.length($value) < $min-length {
+    @return 'must have at least `#{$min-length}` items';
+  }
+
+  @return null;
+}
+
+@function list-max-length($max-length, $value) {
+  @if meta.type-of($max-length) != 'number' {
+    @error '[surimi] list.max-length expects a number, got `#{$max-length}` (#{meta.type-of($max-length)})';
+  }
+
+  @if meta.type-of($value) != 'list' {
+    @error 'must be of type `list`, got `#{$value}` (#{meta.type-of($value)})';
+  }
+
+  @if list.length($value) > $max-length {
+    @return 'must have at most `#{$max-length}` items';
+  }
+
+  @return null;
+}
+
+// This should be replaced by validate.__DONT_USE_ME__get-validators(), but there is an issue right now, see that function.
+@function get-list-validators($aliases, $args...) {
+  $keywords: meta.keywords($args);
+
+  $validators: ();
+
+  @each $key, $arg in $keywords {
+    @if $arg != null {
+      $fn-key: $key;
+      @if meta.function-exists('list-#{$key}') {
+        $fn-key: 'list-#{$key}';
+      } @else if map.has-key($aliases, $key) {
+        $alias: map.get($aliases, $key);
+        $fn-key: 'list-#{$alias}';
+      } @else {
+        @error '[surimi] Internal error: Validator function `#{$key}` does not exist for lists.';
+      }
+
+      $fn: meta.get-function($fn-key);
+
+      $validator: (
+        '#{$key}': (
+            'fn': $fn,
+            'arg': $arg,
+          ),
+      );
+      $validators: map.merge($validators, $validator);
+    }
+  }
+
+  @return $validators;
+}

@@ -46,6 +46,37 @@ $_default-label: 'Value';
   @return $validators;
 }
 
+/**
+* Calls the given validators with the value and returns a list of validation errors (prefixed with the label).
+*/
+@function _run-validators($validators, $value, $label) {
+  $validation-errors: [];
+
+  @each $key, $validator in $validators {
+    $fn: map.get($validator, 'fn');
+    $arg: map.get($validator, 'arg');
+
+    // Call the validator function with the value and the argument.
+    $res: meta.call($fn, $arg, $value);
+
+    // Only save and process the result, if the validator returned an error (string).
+    @if $res != null and meta.type-of($res) == 'string' {
+      $validation-errors: list.append($validation-errors, '#{$label} #{$res}');
+    }
+  }
+
+  @return $validation-errors;
+}
+
+/**
+* Validates a primitive value (number or string) against the schema.
+*
+* @param {map} $schema - The schema to validate against, e.g. the return value of `surimi.number(...)`.
+* @param {*} $value - The value to validate.
+* @param {string} $label - A default label to show in front of error messages (e.g. 'Username').
+* if the validator was called with a label (like s.number(..., $label: 'My number')), that label will be used instead.
+* @return {list} A list of validation errors, prefixed by a label, or an empty list if the value is valid.
+*/
 @function _validate-primitive($schema, $value, $label: null) {
   $user-label: map.get($schema, 'label');
 
@@ -58,35 +89,20 @@ $_default-label: 'Value';
 
   $validators: map.get($schema, 'validators');
 
-  $input: [];
-
-  @each $key, $validator in $validators {
-    $fn: map.get($validator, 'fn');
-    $arg: map.get($validator, 'arg');
-
-    $input: list.append($input, ($fn, $arg));
-  }
-
-  $validation-errors: base.validate($schema, $value);
-
-  // Check for any 'base errors' first. If they exist, don't run the validators.
-  // This is done to avoid type-errors in the validators - they lead to unclear error messages.
-  @if list.length($validation-errors) == 0 {
-    @each $item in $input {
-      $fn: list.nth($item, 1);
-      $args: (list.nth($item, 2) $value);
-      $res: meta.call($fn, $args...);
-
-      // Only save and process the result, if the validator returned an error (string).
-      @if $res != null and meta.type-of($res) == 'string' {
-        $validation-errors: list.append($validation-errors, '#{$final-label} #{$res}');
-      }
-    }
-  }
+  $validation-errors: _run-validators($validators, $value, $final-label);
 
   @return $validation-errors;
 }
 
+/**
+* Validates a map value against the schema.
+*
+* @param {map} $schema - The schema to validate against, e.g. the return value of `surimi.map(...)`.
+* @param {map} $value - The value to validate.
+* @param {string} $label - A default label to show in front of error messages (e.g. 'User').
+* if the validator was called with a label (like s.map(..., $label: 'My map')), that label will be used instead.
+* @return {map} A list of all validation errors of the map, flattened into one array.
+*/
 @function _validate-map($schema, $value, $label) {
   $map-user-label: map.get($schema, 'label');
 
@@ -99,9 +115,13 @@ $_default-label: 'Value';
     $map-label: 'Map';
   }
 
-  $results: ();
+  $validators: map.get($schema, 'validators');
 
-  @each $key, $sub-schema in map.get($schema, 'validators') {
+  // First, validate the base criteria for the list (like uniqueness, min/max length, etc.)
+  $validation-errors: _run-validators($validators, $value, $map-label);
+
+  // Now, validate sub-items
+  @each $key, $sub-schema in map.get($schema, 'schema') {
     $sub-value: map.get($value, $key);
     $sub-label: map.get($sub-schema, 'label');
 
@@ -113,15 +133,39 @@ $_default-label: 'Value';
 
     $res: _validate($sub-schema, $sub-value, $final-label);
 
-    $results: map.merge(
-      $results,
-      (
-        '#{$key}': $res,
-      )
-    );
+    $validation-errors: list.join($validation-errors, $res);
   }
 
-  @return $results;
+  @return $validation-errors;
+}
+
+@function _validate-list($schema, $value, $label) {
+  $list-user-label: map.get($schema, 'label');
+
+  $list-label: $_default-label;
+  @if $list-user-label != null {
+    $list-label: $list-user-label;
+  } @else if $label != null {
+    $list-label: $label;
+  } @else {
+    $list-label: 'List';
+  }
+
+  $validators: map.get($schema, 'validators');
+
+  // First, validate the base criteria for the list (like uniqueness, min/max length, etc.)
+  $validation-errors: _run-validators($validators, $value, $list-label);
+
+  // Now, validate sub-items
+  $item-schema: map.get($schema, 'schema');
+
+  @each $item in $value {
+    // Validate each item in the list against the schema.
+    $res: _validate($item-schema, $item, '#{$list-label} items');
+    $validation-errors: list.join($validation-errors, $res);
+  }
+
+  @return $validation-errors;
 }
 
 /* The base (internal) function to validate any type of schema.
@@ -136,17 +180,21 @@ $_default-label: 'Value';
     @error '[surimi] The first value passed to `validate` must be a valid schema, for example the return value of `surimi.number(...)`';
   }
 
-  $validation-errors: [];
+  $validation-errors: base.validate($schema, $value);
+
+  // Check for any 'base errors' first. If they exist, don't run the validators.
+  // This is done to ensure the 'base' criteria for validators are met first. See the base.validate function.
+  @if list.length($validation-errors) != 0 {
+    @return $validation-errors;
+  }
 
   $schema-type: utils.get-schema-type($schema);
   @if $schema-type == 'number' or $schema-type == 'string' {
     $validation-errors: _validate-primitive($schema, $value, $label);
   } @else if $schema-type == 'map' {
-    $map-result: _validate-map($schema, $value, $label);
-
-    @each $key, $errors in $map-result {
-      $validation-errors: list.join($validation-errors, $errors);
-    }
+    $validation-errors: _validate-map($schema, $value, $label);
+  } @else if $schema-type == 'list' {
+    $validation-errors: _validate-list($schema, $value, $label);
   } @else {
     @error '[surimi] Invalid schema type `#{$schema-type}`. Supported types are `number`, `string`, and `map`.';
   }
