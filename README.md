@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/janis-me/surimi" target="_blank" rel="noopener noreferrer">
-    <img width="180" src="./surimi.png" alt="Surimi logo">
+    <img width="180" src="https://surimi.dev/surimi-512x512.webp" alt="Surimi logo">
   </a>
 </p>
 <p align="center" style="margin-top: -8px">
