@@ -98,18 +98,6 @@
   @return null;
 }
 
-@function string-max-length($max-length, $value) {
-  @if meta.type-of($max-length) != 'number' {
-    @error '[surimi] string.max-length expects a number, got `#{$max-length}` (#{meta.type-of($max-length)})';
-  }
-
-  @if string.length($value) > $max-length {
-    @return 'must not be longer than #{$max-length} characters';
-  }
-
-  @return null;
-}
-
 @function string-min-length($min-length, $value) {
   @if meta.type-of($min-length) != 'number' {
     @error '[surimi] string.min-length expects a number, got `#{$min-length}` (#{meta.type-of($min-length)})';
@@ -117,6 +105,18 @@
 
   @if string.length($value) < $min-length {
     @return 'must be at least #{$min-length} characters long';
+  }
+
+  @return null;
+}
+
+@function string-max-length($max-length, $value) {
+  @if meta.type-of($max-length) != 'number' {
+    @error '[surimi] string.max-length expects a number, got `#{$max-length}` (#{meta.type-of($max-length)})';
+  }
+
+  @if string.length($value) > $max-length {
+    @return 'must not be longer than #{$max-length} characters';
   }
 
   @return null;
@@ -139,18 +139,18 @@
   @return null;
 }
 
-@function string-not-in($not-in, $value) {
-  @if meta.type-of($not-in) != 'list' {
-    @error '[surimi] string.not-in expects a list, got `#{$not-in}` (#{meta.type-of($not-in)})';
+@function string-nin($nin, $value) {
+  @if meta.type-of($nin) != 'list' {
+    @error '[surimi] string.nin expects a list, got `#{$nin}` (#{meta.type-of($nin)})';
   }
-  @each $item in $not-in {
+  @each $item in $nin {
     @if meta.type-of($item) != 'string' {
-      @error '[surimi] string.not-in expects a list of strings, but one was `#{$item}` (#{meta.type-of($item)})';
+      @error '[surimi] string.nin expects a list of strings, but one was `#{$item}` (#{meta.type-of($item)})';
     }
   }
 
-  @if list.index($not-in, $value) {
-    @return 'must not be one of: #{list.join($not-in, ', ')}';
+  @if list.index($nin, $value) {
+    @return 'must not be one of: #{list.join($nin, ', ')}';
   }
 
   @return null;

@@ -93,18 +93,18 @@
   @return null;
 }
 
-@function number-not-in($not-in, $value) {
-  @if meta.type-of($not-in) != 'list' {
-    @error '[surimi] number.not-in expects a list, got `#{$not-in}` (#{meta.type-of($not-in)})';
+@function number-nin($nin, $value) {
+  @if meta.type-of($nin) != 'list' {
+    @error '[surimi] number.nin expects a list, got `#{$nin}` (#{meta.type-of($nin)})';
   }
-  @each $item in $not-in {
+  @each $item in $nin {
     @if meta.type-of($item) != 'number' {
-      @error '[surimi] number.not-in expects a list of numbers, but one was `#{$item}` (#{meta.type-of($item)})';
+      @error '[surimi] number.nin expects a list of numbers, but one was `#{$item}` (#{meta.type-of($item)})';
     }
   }
 
-  @if list.index($not-in, $value) != null {
-    @return 'must not be one of: `#{$not-in}`';
+  @if list.index($nin, $value) != null {
+    @return 'must not be one of: `#{$nin}`';
   }
 
   @return null;
