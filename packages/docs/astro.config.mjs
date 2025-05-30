@@ -1,18 +1,32 @@
-// @ts-check
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import mdx from '@astrojs/mdx';
+import { transformerMetaHighlight } from '@shikijs/transformers';
 import { defineConfig } from 'astro/config';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import autolinkHeadings from 'rehype-autolink-headings';
+import remarkCustomHeaderId from 'remark-custom-header-id';
+import remarkToc from 'remark-toc';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://surimi.dev',
-  integrations: [mdx()],
+  integrations: [
+    mdx({
+      rehypePlugins: [
+        [
+          autolinkHeadings,
+          {
+            behavior: 'wrap',
+            properties: {
+              className: ['markdown-anchor'],
+            },
+          },
+        ],
+      ],
+    }),
+  ],
   markdown: {
+    remarkPlugins: [[remarkToc, { heading: 'content', maxDepth: 3 }], remarkCustomHeaderId],
     shikiConfig: {
+      transformers: [transformerMetaHighlight()],
       themes: {
         light: 'rose-pine-dawn',
         dark: 'kanagawa-dragon',
