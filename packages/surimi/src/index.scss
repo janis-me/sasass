@@ -11,6 +11,7 @@
 $_number-aliases: (
   'min': 'gte',
   'max': 'lte',
+  'not-in': 'nin',
 );
 
 @function number($label: null, $args...) {
@@ -31,6 +32,7 @@ $_number-aliases: (
 $_string-aliases: (
   'min': 'min-length',
   'max': 'max-length',
+  'not-in': 'nin',
 );
 
 @function string($label: null, $args...) {
@@ -50,7 +52,7 @@ $_string-aliases: (
 
 $_map-aliases: ();
 
-@function map($map, $label: null, $args...) {
+@function map($schema, $label: null, $args...) {
   $kvargs: meta.keywords($args);
   $allowed-validators: validators.list('map', $_map-aliases);
 
@@ -60,11 +62,11 @@ $_map-aliases: ();
     }
   }
 
-  @if meta.type-of($map) != 'map' {
-    @error '[surimi] `schema` expected a map, but got #{meta.type-of($map)}';
+  @if meta.type-of($schema) != 'map' {
+    @error '[surimi] `schema` expected a map, but got #{meta.type-of($schema)}';
   }
 
-  @each $key, $value in $map {
+  @each $key, $value in $schema {
     @if not utils.is-schema($value) {
       @error '[surimi] `schema` expected a map with validators, but got `#{$key}: #{meta.type-of($value)}`';
     }
@@ -72,7 +74,7 @@ $_map-aliases: ();
 
   $validators: validators.get-map-validators($_map-aliases, $args...);
 
-  @return ('type': 'map', 'label': $label, 'validators': $validators, 'schema': $map);
+  @return ('type': 'map', 'label': $label, 'validators': $validators, 'schema': $schema);
 }
 
 $_list-aliases: ();

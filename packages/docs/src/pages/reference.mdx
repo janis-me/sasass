@@ -1,0 +1,168 @@
+---
+layout: ../layouts/Layout.astro
+title: surimi.dev - reference
+---
+<html>
+  <head>
+  <title>surimi.dev - reference</title>
+  </head>
+</html>
+
+# surimi reference
+This page is a reference for the Surimi library, which provides a set of mixins and functions for validating Sass variables against defined schemas.
+
+### Content:
+- [Validation](#validation)
+  - [validate](#validate)
+  - [validate-fn](#validate-fn)
+- [Schema functions](#schema-functions)
+  - [number](#number)
+  - [string](#string)
+  - [map](#map)
+  - [list](#list)
+---
+
+## Validation ||validation||
+
+### `validate` ||validate||
+<div style="padding-left: 16px; border-left: 2px solid var(--themed-gray-3);">
+Signature: `s.validate($schema, $value, $label: null, $throw: true, $prefix: 'surimi')`
+
+Validate a given value against a schema.
+
+If a label is provided, it will be used in error messages (if the schema did not provide one.). Otherwise, a default label will be used based on the schema type.
+
+If `$throw` is set to `true`, an error will be thrown if the value does not match the schema. If `false`, will show warnings instead.
+
+Example: 
+```scss
+$schema: s.list(s.number($min: 0, $max: 100), $unique: true);
+
+@include s.validate($schema, [10, 20, 30] );
+```
+</div>
+
+### `validate-fn` ||validate-fn||
+<div style="padding-left: 16px; border-left: 2px solid var(--themed-gray-3);">
+Signature: `validate-fn($schema, $value, $label: null, $throw: true, $warn: false, $prefix: 'surimi')`
+
+Validate a given value against a schema.
+
+If a label is provided, it will be used in error messages (if the schema did not provide one.). Otherwise, a default label will be used based on the schema type.
+
+If `$throw` is set to `true`, an error will be thrown if the value does not match the schema. If `false`, will return the list of errors!
+This is different from `s.validate`, which will show warnings in that case. To show warnings instead of errors, set `$warn` to `true`.
+
+Example: 
+```scss
+$schema: s.list(s.number($min: 0, $max: 100), $unique: true);
+
+@include s.validate($schema, [10, 20, 30] );
+```
+</div>
+
+## Schema functions ||schema-functions||
+
+All schemas validate the value input type by default. So a `number` schema will only accept numbers, passing a string will result in an error.
+### `number` ||number||
+<div style="padding-left: 16px; border-left: 2px solid var(--themed-gray-3);">
+Signature: `s.number($label: null, $args...)` 
+
+Example: 
+```scss
+$schema: s.number(
+  $min: 0,
+  $max: 100,
+);
+```
+
+Available validators: 
+- `$eq`: equal to a value
+- `$ne`: not equal to a value
+- `$gt`: greater than a value
+- `$lt`: less than a value
+- `$gte`: greater than or equal to a value
+- `$lte`: less than or equal to a value
+- `$in`: value is in a list of values
+- `$nin`: value is not in a list of values
+
+Aliases:
+- `$min`: alias for `$gte`
+- `$max`: alias for `$lte`
+- `$not-in`: alias for `$nin`
+</div>
+
+---
+
+### `string` ||string||
+<div style="padding-left: 16px; border-left: 2px solid var(--themed-gray-3);">
+Signature: `s.string($label: null, $args...)`
+
+Example: 
+```scss
+$schema: s.string(
+  $min-length: 0,
+  $max-length: 100,
+);
+```
+
+Available validators: 
+- `$eq`: equal to a value
+- `$ne`: not equal to a value
+- `$contains`: value contains a substring
+- `$not-contains`: value does not contain a substring
+- `$starts-with`: value starts with a substring
+- `$ends-with`: value ends with a substring
+- `$not-starts-with`: value does not start with a substring
+- `$not-ends-with`: value does not end with a substring
+- `$max-length`: maximum length of the string
+- `$min-length`: minimum length of the string
+- `$in`: value is in a list of values
+- `$nin`: value is not in a list of values
+
+Aliases:
+- `$not-in`: alias for `$nin`
+</div>
+
+---
+
+### `map` ||map||
+<div style="padding-left: 16px; border-left: 2px solid var(--themed-gray-3);">
+Signature: `s.map($schema, $label: null, $args...)`
+
+Example: 
+```scss
+$schema: s.map((
+  'key1': s.string($min-length: 1),
+  'key2': s.number($min: 0, $max: 100),
+  )
+);
+```
+
+Available validators: 
+- Currently, none.
+
+Aliases:
+- Currently, none.
+</div>
+
+---
+
+### `list` ||list||
+<div style="padding-left: 16px; border-left: 2px solid var(--themed-gray-3);">
+
+
+Example: 
+```scss
+$schema: s.list(s.number($min: 0, $max: 100), $unique: true);
+```
+
+Available validators: 
+- `$unique`: all values in the list must be unique
+- `$min-length`: minimum length of the list
+- `$max-length`: maximum length of the list
+
+Aliases:
+- Currently, none.
+</div>
+

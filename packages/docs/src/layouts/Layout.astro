@@ -1,42 +1,79 @@
 ---
 import { Image } from 'astro:assets';
 
-import logo from '../assets/surimi.png';
+import logo from '../assets/surimi-256x256.webp';
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/surimi-128x128.webp" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>surimi.dev</title>
-  </head>
-  <script>
-    import { setDefaultTheme, setTheme, toggleTheme } from '@janis.me/themed/js';
+    <script>
+      import { createElement, Github, Moon, Sun } from 'lucide';
 
-    setDefaultTheme();
+      import { getTheme, setDefaultTheme, setTheme, toggleTheme, watchPreferredColorScheme } from '@janis.me/themed/js';
 
-    const toggleThemeButton = document.getElementById('toggle-theme-button');
-    if (toggleThemeButton) {
-      toggleThemeButton.addEventListener('click', () => {
-        const newTheme = toggleTheme();
-        setTheme(newTheme);
-      });
-    }
-  </script>
+      const sunIcon = createElement(Sun);
+      const moonIcon = createElement(Moon);
+      const githubIcon = createElement(Github);
+
+      setDefaultTheme();
+      watchPreferredColorScheme(setTheme);
+
+      const setThemeIcon = (element: HTMLElement, theme: string) => {
+        element.innerHTML = '';
+        element.appendChild(theme === 'dark' ? sunIcon : moonIcon);
+      };
+
+      const toggleThemeButton = document.getElementById('toggle-theme-button');
+      if (toggleThemeButton) {
+        const currentTheme = getTheme();
+        setThemeIcon(toggleThemeButton, currentTheme);
+
+        toggleThemeButton.addEventListener('click', () => {
+          const newTheme = toggleTheme();
+          setTheme(newTheme);
+          setThemeIcon(toggleThemeButton, newTheme);
+        });
+      }
+
+      const githubButton = document.getElementById('github-button');
+      if (githubButton) {
+        githubButton.innerHTML = '';
+        githubButton.appendChild(githubIcon);
+      }
+    </script></head
+  >
 
   <body>
     <header class="header">
-      <h1>
-        <Image src={logo} alt="Surimi Logo" width={32} height={32} class="logo" />
-        surimi.dev
-      </h1>
+      <a href="/">
+        <h1>
+          <Image src={logo} alt="Surimi Logo" width={32} height={32} class="logo" />
+          surimi.dev
+        </h1>
+      </a>
 
-      <button id="toggle-theme-button">toggle theme</button>
+      <div class="header__right">
+        <a href="/">Home</a>
+        <a href="/intro">Intro</a>
+        <a href="/reference">Reference</a>
+
+        <div class="header__buttons">
+          <a href="https://github.com/janis-me/surimi" target="_blank" rel="noopener noreferrer">
+            <button id="github-button"></button>
+          </a>
+          <button id="toggle-theme-button"></button>
+        </div>
+      </div>
     </header>
     <main class="container">
       <slot />
+
+      <hr class="container__divider" />
+
       <footer class="footer">
         <p>
           ©2025 surimi.dev - built with astro, markdown and
@@ -62,11 +99,21 @@ import logo from '../assets/surimi.png';
     justify-content: space-between;
     align-items: center;
     height: 100%;
+
+    &__right {
+      display: flex;
+      align-items: center;
+      gap: themed('size-32');
+    }
   }
 
   .container {
     height: 100%;
     overflow: auto;
+
+    &__divider {
+      margin: themed('size-64') themed('size-32') themed('size-8');
+    }
   }
 
   .footer {
@@ -77,7 +124,7 @@ import logo from '../assets/surimi.png';
   @include media('>ultrawide') {
     .header,
     .container {
-      padding: 0 calc(themed('size-64') * 4);
+      padding: 0 calc(themed('size-64') * 8);
     }
   }
 

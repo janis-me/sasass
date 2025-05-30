@@ -16,10 +16,11 @@ const stringOptions = [
   'not-starts-with',
   'not-ends-with',
 ];
-const numberOptions = ['max-length', 'min-length'];
+const numberOptions = ['min-length', 'max-length'];
 const numberAliases = ['min', 'max'];
-const listOptions = ['in', 'not-in'];
-const allOptions = [...stringOptions, ...numberOptions, ...listOptions, ...numberAliases];
+const listOptions = ['in', 'nin'];
+const listAliases = ['not-in'];
+const allOptions = [...stringOptions, ...numberOptions, ...listOptions, ...numberAliases, ...listAliases];
 
 describe('string validator', () => {
   it('creates a string validator correctly', async () => {

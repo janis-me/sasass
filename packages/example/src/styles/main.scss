@@ -1,39 +1,43 @@
 @use 'surimi' as s;
 
-$my-map-schema: s.map(
+$theme-schema: s.map(
   (
     'name': s.string(
-        $starts-with: 'su',
+        $awdawd: 'su',
         $ends-with: 'mi',
         $label: 'First name',
       ),
-    'age': s.number(
-        $gte: 18,
-      ),
-    'items': s.map(
-        (
-          'name': s.string(
-              $min-length: 3,
-              $label: 'Item Name',
-            ),
-          'price': s.number(
-              $gte: 0,
-            ),
+    'kind': s.string(
+        $in: (
+          'light',
+          'dark',
         ),
-        $label: 'User Items'
+        $label: 'Theme kind',
+      ),
+    'tokens': s.list(
+        s.map(
+          (
+            'name': s.string(
+                $min-length: 3,
+              ),
+            'value': s.number(
+                $min: 0,
+              ),
+          )
+        )
       ),
   ),
   $label: 'User'
 );
 
 @include s.validate(
-  $my-map-schema,
+  $theme-schema,
   (
     'name': 'surimi',
-    'age': 20,
-    'items': (
-      'name': '2',
-      'price': 10,
+    'kind': 'light',
+    'tokens': (
+      ('name': 'primary', 'value': 100),
+      ('name': 'secondary', 'value': -1),
     ),
   )
 ); // All good!

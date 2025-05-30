@@ -1,0 +1,181 @@
+---
+layout: ../layouts/Layout.astro
+title: surimi.dev - intro
+---
+<html>
+  <head>
+  <title>surimi.dev - intro</title>
+  </head>
+</html>
+
+# An introduction to surimi
+
+It's **very** easy to get started. TL;DR:
+1. Install: `npm install surimi`,
+2. Import: `@use 'surimi' as s;`,
+3. Define a schema: `s.number($min: 0)`,
+4. Use it: `s.validate($my-schema, 20)`.
+
+### Content
+
+## Installation
+
+Surimi is available as an npm package
+
+```bash
+# npm
+npm install surimi
+# pnpm
+pnpm add surimi
+```
+
+or via a CDN like unpkg. To load it from a CDN, just `@use` it in your Sass file:
+
+```scss
+@use "https://unpkg.com/surimi@latest" as s;
+```
+
+## Usage
+
+First, import `surimi`, optionally with the `s` namespace. Then, define a schema. For example, a number between 0 and 100:
+
+```scss {3-6}
+@use "surimi" as s;
+
+$schema: s.number(
+  $min: 0,
+  $max: 100,
+)
+```
+
+And finally, call the `validate mixin to check the schema.
+
+```scss {8}
+@use "surimi" as s;
+
+$schema: s.number(
+  $min: 0,
+  $max: 100,
+);
+
+@include s.validate($schema, 420);
+```
+
+By default, the validate mixin will throw an error as soon as the value does not meet the schema. In this case, the error will be:
+
+```bash
+"[surimi] Value must be less than or equal to `100`"
+```
+
+You might note that it shows `[surimi]` and `Value` in the error message. Both can be customized to your liking! Just pass the `$label` and `$prefix` arguments to the `validate` mixin to get
+```bash
+"[my-lib] My number must be less than or equal to `100`"
+```
+
+But, every schema (like [number](/reference#number), [string](/reference#string), [map](/reference#map), [list](/reference#list), etc.) accepts a `$label` property! That's the preferred way to giving better names to your values.
+Labels are especially useful when you define more complex schemas, like nested maps and lists. Take this example of validating some kind of theme definitions:
+
+```scss
+$theme-schema: s.map(
+  (
+    'name': s.string(
+        $starts-with: 'su',
+        $ends-with: 'mi',
+        $label: 'First name',
+      ),
+    'kind': s.string(
+        $in: (
+          'light',
+          'dark',
+        ),
+        $label: 'Theme kind',
+      ),
+    'tokens': s.list(
+        s.map(
+          (
+            'name': s.string(
+                $min-length: 3,
+                $label: 'Token name',
+              ),
+            'value': s.number(
+                $min: 0, // just an example
+                $label: 'Token value',
+              ),
+          )
+        ),
+        $label: 'Theme tokens'
+      ),
+  ),
+  $label: 'User'
+);
+```
+
+A lot going on here! But basically it's just a map with a few props, and a list of maps for the 'tokens'. It can be used to validate data like this:
+
+```scss
+@include s.validate(
+  $theme-schema,
+  (
+    'name': 'surimi',
+    'kind': 'light',
+    'tokens': (
+      (
+        'name': 'primary',
+        'value': 100,
+      ),
+      (
+        'name': 'secondary',
+        'value': 200,
+      ),
+    ),
+  )
+); // All good!
+```
+
+Now, if a value inside that map does not meet the schema, the error will be more descriptive:
+
+```bash
+"[surimi] Token value must be greater than or equal to `0`"
+```
+
+Maps and lists are even able to infer the label by using the propery key! So if you were to leave out labels for these properties, it would still make sense:
+```bash
+"[surimi] User.tokens > items.value must be greater than or equal to `0`"
+```
+
+## Validators
+
+Each schema ([number](/reference#number), [string](/reference#string), [map](/reference#map), [list](/reference#list), etc.) accepts a set of validators. These validators are then called with the value passed into `validate`.
+
+Usually, these validators are very descriptive, like `min`, `min-length`, `unique` etc.
+If you want to see all available validators, check the [reference](/reference), or pass some gibberish to the schema! It will show you exactly what validators are available for that schema.
+```bash
+"[surimi] `string.awdawd` is not a valid validator. Allowed validators are: [eq ne contains not-contains starts-with ends-with ... in not-in min max]"
+```
+
+Every validator accepts a `$label` property, which will be used in the error message (see above).
+
+Validators for non-primitive types are a bit different. They still accept a bunch of properties, and the `label` prop, but most importantly, the first argument is a sub-schema to validate the value against.
+For `s.map`, you can pass a map of schemas, and for `s.list`, you can pass a single schema. For example:
+
+```scss
+$user-list-schema: s.list(
+  s.string(
+    $min-length: 3,
+    $label: 'Username',
+  ),
+  $unique: true,
+  $label: 'Users',
+);
+```
+
+Now, the list will validate each item against the `string` schema, and will also check if the items are unique.
+
+## The `validate` mixin
+The `validate` mixin is the main entry point for validating values against schemas. It accepts the schema as the first argument, and the value to validate as the second argument.
+By default, it just throws an error when there are any, otherwise it will do nothing.
+Using the `$throw` argument, you can make it warn users instead!
+
+If you don't want to show any error or warnings, you can instead use the [validate-fn](/reference#validate-fn) function.
+
+If you set it's `$throw` argument to `false`, it will return a list of all errors, that you can use to do some custom logic. One use-case would be to throw an error next to some comments, so that the console is more descriptive.

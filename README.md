@@ -1,11 +1,14 @@
 <p align="center">
   <a href="https://github.com/janis-me/surimi" target="_blank" rel="noopener noreferrer">
-    <img width="180" src="./surimi.png" alt="Surimi logo">
+    <img width="180" src="https://surimi.dev/surimi-512x512.webp" alt="Surimi logo">
   </a>
 </p>
 <p align="center" style="margin-top: -8px">
+  <a href="https://surimi.dev">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-online-orange">
+  </a>
   <a href="https://npmjs.com/package/surimi">
-    <img alt="surimi on npm" src="https://img.shields.io/npm/v/surimi?label=surimi%20on%20npm%20&labelColor=orange&color=grey">
+    <img alt="surimi on npm" src="https://img.shields.io/npm/v/surimi?label=surimi%20on%20npm%20&labelColor=grey&color=orange">
   </a>
   <a href="https://github.com/janis-me/surimi">
     <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/janis-me/surimi?style=flat">
@@ -35,6 +38,11 @@ pnpm add -D surimi
 
 and.. that's it!
 
+> [!UBFI]  
+> Documentation and reference are now available on our website, [surimi.dev](https://surimi.dev)
+
+## introduction
+
 ```scss
 @use 'surimi' as s;
 
@@ -56,32 +64,12 @@ You will recognize many of the properties - they are simple strings similar to '
 
 ```
 [surimi] `string.min` is not a valid validator. Allowed validators are: [eq, in, not-in, contains, not-contains, ... max-length, min-length]
-    ╷
-7   │   $my-string-schema: s.string(
-    │ ┌────────────────────^
-8   │ │   $min: 'su',
-9   │ │   $ends-with: 'mi',
-10  │ │ );
-    │ └─^
 ```
 
 All `surimi` methods are validated themselves - leaving zero room for errors. Of course, validation errors look just as nice:
 
 ```
 [surimi] Value must be greater than or equal to 18
-    ╷
-12  │ @include s.validate($my-number-schema, 15); // Oh-oh, an error!
-    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ╵
 ```
 
-## Usage
-
-At this time, only three simple validators are supported: `string`, `number` and `map`. We're working on extending them!
-
-Regardless of which validator you use, pass the result into either `surimi.validate` or `surimi.validate-fn`. The first is a mixin you can use with `@include`, the second one is a function you can just call. Both receive the same arguments, with two differences:
-
-1. When `throw` is set to `false`, the mixin will print out warnings instead. The function will **return the errors** as a list.
-2. The function cannot be called without specifying a return value. That's a limitation of SCSS, and the reason the mixin exists!
-
-In any case, the methods have no side-effects. They either just throw errors/warnings, or return the errors.
+For a full introduction, visit our [docs](https://surimi.dev/intro), or check out the [reference](https://surimi.dev/reference)

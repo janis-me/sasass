@@ -14,12 +14,17 @@
     "@fontsource-variable/jetbrains-mono": "^5.2.5",
     "astro": "^5.8.1",
     "include-media": "^2.0.0",
+    "lucide": "^0.511.0",
+    "remark-toc": "^9.0.0",
     "sanitize.css": "^13.0.0"
   },
   "devDependencies": {
     "@janis.me/linter-config": "workspace:*",
     "@janis.me/themed": "^0.2.0",
     "@janis.me/typescript-config": "workspace:*",
+    "@shikijs/transformers": "^3.4.2",
+    "rehype-autolink-headings": "^7.1.0",
+    "remark-custom-header-id": "^1.0.0",
     "sass": "catalog:build",
     "sharp": "^0.34.2"
   }
