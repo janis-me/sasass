@@ -132,7 +132,7 @@
     }
   }
 
-  @if not list.nth($in, $value) {
+  @if not list.index($in, $value) {
     @return 'must be one of: #{list.join($in, ', ')}';
   }
 
@@ -149,7 +149,7 @@
     }
   }
 
-  @if list.nth($not-in, $value) {
+  @if list.index($not-in, $value) {
     @return 'must not be one of: #{list.join($not-in, ', ')}';
   }
 
