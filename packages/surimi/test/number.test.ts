@@ -8,8 +8,9 @@ const BASE_INPUT = `
 
 const numberOptions = ['eq', 'ne', 'gt', 'lt', 'gte', 'lte'];
 const numberAliases = ['min', 'max'];
-const listOptions = ['in', 'not-in'];
-const allOptions = [...numberOptions, ...listOptions, ...numberAliases];
+const listOptions = ['in', 'nin'];
+const listAliases = ['not-in'];
+const allOptions = [...numberOptions, ...listOptions, ...numberAliases, ...listAliases];
 
 describe('number validator', () => {
   it('creates a number validator correctly', async () => {
