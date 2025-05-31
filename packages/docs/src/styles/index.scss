@@ -3,7 +3,32 @@
 
 @use './globals' as *;
 
-@include apply() using ($prefix, $key, $value, $theme) {
+@include apply();
+
+html[data-theme='dark'] {
+  code,
+  .astro-code,
+  .astro-code span,
+  .astro-code .line {
+    background-color: themed('gray-2') !important;
+    /* Optional, if you also want font styles */
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}
+
+html[data-theme='light'] {
+  code,
+  .astro-code,
+  .astro-code span,
+  .astro-code .line {
+    background-color: themed('gray-2') !important;
+    /* Optional, if you also want font styles */
+    font-style: var(--shiki-light-font-style) !important;
+    font-weight: var(--shiki-light-font-weight) !important;
+    text-decoration: var(--shiki-light-text-decoration) !important;
+  }
 }
 
 .astro-code {
@@ -11,15 +36,40 @@
     display: inline-block;
     padding: 0 !important;
     width: 100%;
-  }
 
-  .line {
-    display: inline-block;
-    width: 100%;
-    padding: 0 themed('size-8');
+    // the usual styling
+    .line {
+      display: inline-block;
+      width: 100%;
+      padding: themed('size-2') themed('size-8');
+    }
 
-    &.highlighted {
-      background-color: themed('gray-4') !important;
+    $highlighted-border: 2px dotted themed('primary-6');
+
+    &:has(.highlighted) {
+      .line:not(.highlighted) {
+        filter: blur(1px);
+      }
+
+      // Select the first highlighted line that comes after a non-highlighted line
+      .line:not(.highlighted):has(+ .highlighted) + .highlighted {
+        border-top: $highlighted-border;
+      }
+
+      .highlighted {
+        border-left: $highlighted-border;
+        border-right: $highlighted-border;
+      }
+
+      // The first highlighted line, if there is no previous line
+      .highlighted:first-of-type {
+        border-top: $highlighted-border;
+      }
+
+      // highlighted lines that are not followed by another highlighted line
+      .highlighted:not(:has(+ .highlighted)) {
+        border-bottom: $highlighted-border;
+      }
     }
   }
 }
@@ -63,7 +113,6 @@ a {
 }
 
 code {
-  background-color: themed('gray-2');
   padding: 0 themed('size-4');
 }
 
@@ -99,7 +148,6 @@ button {
   padding: 8px 16px;
   border-radius: 3px;
   cursor: pointer;
-  transition: all 100ms ease-in-out;
 
   &:hover {
     background-color: themed('gray-3');

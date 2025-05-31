@@ -52,14 +52,16 @@ import logo from '../assets/surimi-256x256.webp';
       <a href="/">
         <h1>
           <Image src={logo} alt="Surimi Logo" width={32} height={32} class="logo" />
-          surimi.dev
+          surimi
         </h1>
       </a>
 
       <div class="header__right">
-        <a href="/">Home</a>
-        <a href="/intro">Intro</a>
-        <a href="/reference">Reference</a>
+        <div class="header__nav">
+          <a href="/">Home</a>
+          <a href="/intro">Intro</a>
+          <a href="/reference">Reference</a>
+        </div>
 
         <div class="header__buttons">
           <a href="https://github.com/janis-me/surimi" target="_blank" rel="noopener noreferrer">
@@ -105,11 +107,30 @@ import logo from '../assets/surimi-256x256.webp';
       align-items: center;
       gap: themed('size-32');
     }
+
+    @include media('<tablet') {
+      &__right {
+        gap: themed('size-16');
+      }
+
+      &__nav {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+
+        background-color: themed('gray-2');
+        padding: themed('size-16') themed('size-32');
+        display: flex;
+        justify-content: space-evenly;
+      }
+    }
   }
 
   .container {
     height: 100%;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     &__divider {
       margin: themed('size-64') themed('size-32') themed('size-8');
@@ -146,6 +167,17 @@ import logo from '../assets/surimi-256x256.webp';
     .header,
     .container {
       padding: 0 themed('size-32');
+    }
+
+    .container {
+      &__divider {
+        margin: themed('size-32') themed('size-16') themed('size-8');
+      }
+    }
+
+    .footer {
+      padding-bottom: themed('size-64');
+      text-align: center;
     }
   }
 

@@ -37,7 +37,18 @@ or via a CDN like unpkg. To load it from a CDN, just `@use` it in your Sass file
 
 ## Usage
 
-First, import `surimi`, optionally with the `s` namespace. Then, define a schema. For example, a number between 0 and 100:
+First, import `surimi`, optionally with the `s` namespace.
+```scss {1}
+@use "surimi" as s;
+
+$schema: s.number(
+  $min: 0,
+  $max: 100,
+);
+
+@include s.validate($schema, 420);
+```
+Then, define a schema. For example, a number between 0 and 100:
 
 ```scss {3-6}
 @use "surimi" as s;
@@ -45,7 +56,9 @@ First, import `surimi`, optionally with the `s` namespace. Then, define a schema
 $schema: s.number(
   $min: 0,
   $max: 100,
-)
+);
+
+@include s.validate($schema, 420);
 ```
 
 And finally, call the `validate mixin to check the schema.
