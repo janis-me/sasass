@@ -25,21 +25,26 @@ Make your SCSS/SASS safer with `surimi`. Define a schema for your data and ensur
 - 🌈 Beautiful, customizable error messages
 - ✅ Tested with [Vitest](https://vitest.dev) and the sass compiler
 
+> [!INFO]  
+> Documentation and reference are now available on our website, [surimi.dev](https://surimi.dev).
+> For a quick intro into surimi, check out [surimi.dev/intro](https://surimi.dev/intro)
+
 ## installation
 
-To use `surimi`, you gota have `sass`, `sass-embedded` or any other SASS/SCSS compiler installed. Then just
+Surimi is available as an npm package
 
 ```bash
 # npm
-npm install -D surimi
+npm install surimi
 # pnpm
-pnpm add -D surimi
+pnpm add surimi
 ```
 
-and.. that's it!
+or via a CDN like unpkg. To load it from a CDN, just `@use` it in your Sass file:
 
-> [!UBFI]  
-> Documentation and reference are now available on our website, [surimi.dev](https://surimi.dev)
+```scss
+@use 'https://unpkg.com/surimi@latest' as s;
+```
 
 ## introduction
 

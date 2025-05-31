@@ -86,7 +86,7 @@ html,
 body {
   margin: 0;
   width: 100vw;
-  height: 100dvh;
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -94,6 +94,7 @@ body {
   font-family: 'JetBrains Mono Variable', 'IBM Plex Mono', Tahoma, Geneva, Verdana, sans-serif;
   background-color: themed('gray-1');
   color: themed('gray-12');
+  position: relative;
 }
 
 a {
@@ -152,6 +153,10 @@ button {
   &:hover {
     background-color: themed('gray-3');
   }
+}
+
+ul li {
+  padding: themed('size-4') 0;
 }
 
 @include media('<=tablet') {

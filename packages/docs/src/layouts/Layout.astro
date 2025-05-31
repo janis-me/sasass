@@ -64,10 +64,16 @@ import logo from '../assets/surimi-256x256.webp';
         </div>
 
         <div class="header__buttons">
-          <a href="https://github.com/janis-me/surimi" target="_blank" rel="noopener noreferrer">
-            <button id="github-button"></button>
+          <a
+            href="https://github.com/janis-me/surimi"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open Github repository"
+            id="github-link"
+          >
+            <button id="github-button" aria-labelledby="github-link"></button>
           </a>
-          <button id="toggle-theme-button"></button>
+          <button id="toggle-theme-button" aria-label="Toggle color theme"></button>
         </div>
       </div>
     </header>
