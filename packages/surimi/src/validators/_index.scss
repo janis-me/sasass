@@ -29,3 +29,44 @@
 
   @return sass-list.join($res, $alias-keys);
 }
+
+/**
+ * Returns a map of validators for the given module and prefix.
+ *
+ * @param {string} $module - The module name, as in a string matching the namespace of an @use rule in the current file
+  * @param {map} $aliases - A map of aliases for the module's validators. The keys are the validator names, the values are the aliases.
+ * @param {...string} $args - The keywords to get validators for. They **must** match the module's function names.
+
+ * @return {map} A map of validators.
+ */
+@function get($module, $aliases, $args...) {
+  $kwargs: meta.keywords($args);
+
+  $validators: ();
+
+  @each $key, $arg in $kwargs {
+    @if $arg != null {
+      $fn-key: $key;
+      @if meta.function-exists('#{$module}-#{$key}', $module: $module) {
+        $fn-key: '#{$module}-#{$key}';
+      } @else if sass-map.has-key($aliases, $key) {
+        $alias: sass-map.get($aliases, $key);
+        $fn-key: '#{$module}-#{$alias}';
+      } @else {
+        @error '[surimi] Internal error: Validator function `#{$key}` does not exist for numbers.';
+      }
+
+      $fn: meta.get-function($fn-key, $module: $module);
+
+      $validator: (
+        '#{$key}': (
+            'fn': $fn,
+            'arg': $arg,
+          ),
+      );
+      $validators: sass-map.merge($validators, $validator);
+    }
+  }
+
+  @return $validators;
+}

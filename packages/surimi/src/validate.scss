@@ -9,44 +9,6 @@
 $_default-label: 'Value';
 
 /**
- * Returns a map of validators for the given module and prefix.
- *
- * @param {string} $module - The module name, as in a string matching the namespace of an @use rule in the current file
- * @param {string} $prefix - The prefix of the validator function names, e.g. '__number';
- * @param {...string} $args - The keywords to get validators for. They **must** match the module's function names.
-
- * @return {map} A map of validators.
-
-  * ATTENTION: THIS DOES NOT CURRENTLY WORK. SEE https://github.com/sass/sass/issues/4084
- */
-@function __DONT_USE_ME__get-validators($module, $prefix, $args...) {
-  $kvargs: meta.keywords($args);
-
-  $validators: ();
-
-  @each $key, $arg in $kvargs {
-    @if $arg != null {
-      $function-name: '#{$prefix}-#{$key}';
-      @if not meta.function-exists($function-name, $module) {
-        @error '[surimi] Internal error: Validator function `#{$function-name}` does not exist in module `#{$module}`.';
-      }
-
-      $fn: meta.get-function($function-name, $module);
-
-      $validator: (
-        '#{$key}': (
-            'fn': $fn,
-            'arg': $arg,
-          ),
-      );
-      $validators: map.merge($validators, $validator);
-    }
-  }
-
-  @return $validators;
-}
-
-/**
 * Calls the given validators with the value and returns a list of validation errors (prefixed with the label).
 */
 @function _run-validators($validators, $value, $label) {
