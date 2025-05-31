@@ -25,7 +25,7 @@ Make your SCSS/SASS safer with `surimi`. Define a schema for your data and ensur
 - 🌈 Beautiful, customizable error messages
 - ✅ Tested with [Vitest](https://vitest.dev) and the sass compiler
 
-> [!INFO]  
+> [!NOTE]  
 > Documentation and reference are now available on our website, [surimi.dev](https://surimi.dev).
 > For a quick intro into surimi, check out [surimi.dev/intro](https://surimi.dev/intro)
 
