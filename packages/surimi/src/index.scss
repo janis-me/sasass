@@ -24,7 +24,7 @@ $_number-aliases: (
     }
   }
 
-  $validators: validators.get-number-validators($_number-aliases, $args...);
+  $validators: validators.get('number', $_number-aliases, $args...);
 
   @return ('type': 'number', 'label': $label, 'validators': $validators);
 }
@@ -45,7 +45,7 @@ $_string-aliases: (
     }
   }
 
-  $validators: validators.get-string-validators($_string-aliases, $args...);
+  $validators: validators.get('string', $_string-aliases, $args...);
 
   @return ('type': 'string', 'label': $label, 'validators': $validators);
 }
@@ -72,7 +72,7 @@ $_map-aliases: ();
     }
   }
 
-  $validators: validators.get-map-validators($_map-aliases, $args...);
+  $validators: validators.get('map', $_map-aliases, $args...);
 
   @return ('type': 'map', 'label': $label, 'validators': $validators, 'schema': $schema);
 }
@@ -93,7 +93,7 @@ $_list-aliases: ();
     @error '[surimi] `schema` expected a schema, but got #{meta.type-of($schema)}';
   }
 
-  $validators: validators.get-list-validators($_list-aliases, $args...);
+  $validators: validators.get('list', $_list-aliases, $args...);
 
   @return ('type': 'list', 'label': $label, 'validators': $validators, 'schema': $schema);
 }

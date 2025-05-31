@@ -109,38 +109,3 @@
 
   @return null;
 }
-
-// Public-facing functions:
-
-// This should be replaced by validate.__DONT_USE_ME__get-validators(), but there is an issue right now, see that function.
-@function get-number-validators($aliases, $args...) {
-  $keywords: meta.keywords($args);
-
-  $validators: ();
-
-  @each $key, $arg in $keywords {
-    @if $arg != null {
-      $fn-key: $key;
-      @if meta.function-exists('number-#{$key}') {
-        $fn-key: 'number-#{$key}';
-      } @else if map.has-key($aliases, $key) {
-        $alias: map.get($aliases, $key);
-        $fn-key: 'number-#{$alias}';
-      } @else {
-        @error '[surimi] Internal error: Validator function `#{$key}` does not exist for numbers.';
-      }
-
-      $fn: meta.get-function($fn-key);
-
-      $validator: (
-        '#{$key}': (
-            'fn': $fn,
-            'arg': $arg,
-          ),
-      );
-      $validators: map.merge($validators, $validator);
-    }
-  }
-
-  @return $validators;
-}
